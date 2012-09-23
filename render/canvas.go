@@ -47,11 +47,11 @@ func (c Canvas) Render(tri []geom.Triangle) {
 func (c Canvas) shootRay(x, y int, triangles []geom.Triangle) {
 	ray := c.cameraSpaceRay(x, y)
 	for _, tri := range triangles {
-		_, status := ray.IntersectTriangle(tri)
+		i, status := ray.IntersectTriangle(tri)
 		if status != 1 {
 			c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
 		} else {
-			col := uint8(255) // uint8(i.Z)
+			col := uint8(255 - ((i.Z - 2) * 255 / 5))
 			c.image.Set(x, y, color.RGBA{col, col, col, 255})
 			return
 		}
