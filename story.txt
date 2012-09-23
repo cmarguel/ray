@@ -2,9 +2,10 @@ This logs my attempt to make a raytracer. I have very little idea of how to do t
 and am more or less making it up as I go along.
 
 23 Sept 2012
-	1. Implemented basic math and geometry types/functions.
-	2. Found a page which describes how to get the intersection of a ray and a triangle, so 
-	   that's a huge help right there. http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
-	3. Rendered a simple triangle. Progress?? Right now, the technique is as follows: for each pixel
+	1. 	Implemented basic math and geometry types/functions.
+	2. 	Found a page which describes how to get the intersection of a ray and a triangle, so 
+	  	that's a huge help right there. http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
+	3. 	Rendered a simple triangle. Progress?? Right now, the technique is as follows: for each pixel
 		in the output, shoot a ray from the camera eye (positioned at width/2,height/2,0) to the 
 		corresponding pixel at (x, y, 50). If the ray ever hits a triangle, render it.
+	4.	Currently, I'm assuming a very simple camera--stationary, where up is always <0,1,0>.
