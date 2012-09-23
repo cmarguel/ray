@@ -9,3 +9,5 @@ and am more or less making it up as I go along.
 		in the output, shoot a ray from the camera eye (positioned at width/2,height/2,0) to the 
 		corresponding pixel at (x, y, 50). If the ray ever hits a triangle, render it.
 	4.	Currently, I'm assuming a very simple camera--stationary, where up is always <0,1,0>.
+	5.	Okay, at this point I decided to use PBRT as a reference. At this point I may end up renaming 
+		stuff to jive with the book, and adding classes with similar/same names.
