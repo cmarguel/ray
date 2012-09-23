@@ -36,8 +36,16 @@ func (v Vector3) Neg() Vector3 {
 	return Vector3{-v.X, -v.Y, -v.Z}
 }
 
-func (v Vector3) Magnitude() float64 {
+func (v Vector3) MagnitudeSquared() float64 {
 	return math.Pow(v.X, 2.) + math.Pow(v.Y, 2.) + math.Pow(v.Z, 2.)
+}
+
+func (v Vector3) Magnitude() float64 {
+	return math.Sqrt(math.Pow(v.X, 2.) + math.Pow(v.Y, 2.) + math.Pow(v.Z, 2.))
+}
+
+func (v Vector3) Normalized() Vector3 {
+	return v.Times(1. / v.Magnitude())
 }
 
 func (v Vector3) IsZero() bool {
