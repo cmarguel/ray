@@ -44,7 +44,7 @@ func (c Canvas) Render(tri []geom.Triangle) {
 	c.output.Output(c.image)
 }
 
-func (c Canvas) shootRay(x, y int, triangles []geom.Triangle) {
+func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
 	ray := c.cameraSpaceRay(x, y)
 	for _, tri := range triangles {
 		i, status := ray.IntersectTriangle(tri)
@@ -61,7 +61,7 @@ func (c Canvas) shootRay(x, y int, triangles []geom.Triangle) {
 func (c Canvas) render(triangles []geom.Triangle) {
 	for x := 0; x < c.Width; x++ {
 		for y := 0; y < c.Height; y++ {
-			c.shootRay(x, y, triangles)
+			c.raytrace(x, y, triangles)
 		}
 	}
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"os"
+	"strconv"
 
 	"ray/geom"
 	"ray/mmath"
@@ -52,7 +54,10 @@ func main() {
 
 	c := render.NewCanvasPNG(800, 600, "test.png")
 
-	const numTriangles = 10
+	numTriangles := 10
+	if len(os.Args) > 1 {
+		numTriangles, _ = strconv.Atoi(os.Args[1])
+	}
 
 	triangles := make([]geom.Triangle, 0, numTriangles)
 	for i := 0; i < numTriangles; i++ {
