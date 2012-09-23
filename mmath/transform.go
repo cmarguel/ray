@@ -1,7 +1,9 @@
-package math
+package mmath
 
 import (
 	"math"
+
+	"ray/geom"
 )
 
 type Transform struct {
@@ -73,4 +75,17 @@ func (t Transform) RotateZ(angle float64) Transform {
 		0, 0, 0, 1,
 	)
 	return Transform{tr.Times(t.m)}
+}
+
+func dot(v1, v2 []float64) float64 {
+	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2] + v1[3]*v2[3]
+}
+
+func (t Transform) Apply(v geom.Vector3) geom.Vector3 {
+	v2 := []float64{v.X, v.Y, v.Z, 1.}
+	return geom.NewVector3(
+		dot(t.m.Row(0), v2),
+		dot(t.m.Row(1), v2),
+		dot(t.m.Row(2), v2),
+	)
 }

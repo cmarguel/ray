@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -47,9 +46,6 @@ func (c Canvas) Render(tri []geom.Triangle) {
 
 func (c Canvas) shootRay(x, y int, triangles []geom.Triangle) {
 	ray := c.cameraSpaceRay(x, y)
-	if x == 350 && y == 250 {
-		fmt.Printf("%s to %s\n", ray.Origin, ray.Direction)
-	}
 	for _, tri := range triangles {
 		_, status := ray.IntersectTriangle(tri)
 		if status != 1 {

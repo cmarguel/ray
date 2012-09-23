@@ -11,3 +11,8 @@ and am more or less making it up as I go along.
 	4.	Currently, I'm assuming a very simple camera--stationary, where up is always <0,1,0>.
 	5.	Okay, at this point I decided to use PBRT as a reference. At this point I may end up renaming 
 		stuff to jive with the book, and adding classes with similar/same names.
+		
+24 Sept 2012
+	1.	Implemented transforms. As per PBRT, we work with 3d vectors, but they're converted to 
+		4d vectors during transformations. As far as I know, the fourth dimension is unnecessary
+		for rendering, though we should probably keep this to 1.
