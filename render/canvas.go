@@ -1,6 +1,7 @@
 package render
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -38,24 +39,33 @@ func (c Canvas) Set(x, y int, color color.Color) {
 	c.Set(x, y, color)
 }
 
-func (c Canvas) Render(tri geom.Triangle) {
+func (c Canvas) Render(tri []geom.Triangle) {
 	c.render(tri)
 
 	c.output.Output(c.image)
 }
 
-func (c Canvas) render(triangle geom.Triangle) {
+func (c Canvas) shootRay(x, y int, triangles []geom.Triangle) {
+	ray := c.cameraSpaceRay(x, y)
+	if x == 350 && y == 250 {
+		fmt.Printf("%s to %s\n", ray.Origin, ray.Direction)
+	}
+	for _, tri := range triangles {
+		_, status := ray.IntersectTriangle(tri)
+		if status != 1 {
+			c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
+		} else {
+			col := uint8(255) // uint8(i.Z)
+			c.image.Set(x, y, color.RGBA{col, col, col, 255})
+			return
+		}
+	}
+}
+
+func (c Canvas) render(triangles []geom.Triangle) {
 	for x := 0; x < c.Width; x++ {
 		for y := 0; y < c.Height; y++ {
-			ray := c.cameraSpaceRay(x, y)
-
-			i, status := ray.IntersectTriangle(triangle)
-			if status != 1 {
-				c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
-			} else {
-				col := uint8(i.Z)
-				c.image.Set(x, y, color.RGBA{col, col, col, 255})
-			}
+			c.shootRay(x, y, triangles)
 		}
 	}
 }
@@ -69,5 +79,10 @@ func (c Canvas) cameraSpaceRay(x, y int) geom.Ray {
 	canvasDest := geom.Vector3{float64(x), float64(y), canvasDepth}
 	canvasDir := canvasDest.Minus(canvasEye)
 
-	return geom.Ray{c.camera.Eye, canvasDir}
+	scaleWidth := c.camera.Viewport.Width / float64(c.Width)
+	scaleHeight := c.camera.Viewport.Height / float64(c.Height)
+
+	dir := geom.Vector3{canvasDir.X * scaleWidth, canvasDir.Y * scaleHeight, c.camera.Viewport.Depth}
+
+	return geom.Ray{c.camera.Eye, dir}
 }
