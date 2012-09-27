@@ -55,7 +55,7 @@ func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
 			distance := i.DistanceSquared(c.camera.Eye)
 			if distance < nearestPointDistance {
 				// fmt.Println("inside")
-				col := uint8(255 - ((i.Z + 4) * 255 / 8))
+				col := uint8(255.*(1 - distance / 64.)) // uint8(255 - ((i.Z + 4) * 255 / 8))
 				c.image.Set(x, y, color.RGBA{col, col, col, 255})
 				nearestPointDistance = distance
 			}

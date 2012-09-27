@@ -16,3 +16,6 @@ and am more or less making it up as I go along.
 	1.	Implemented transforms. As per PBRT, we work with 3d vectors, but they're converted to 
 		4d vectors during transformations. As far as I know, the fourth dimension is unnecessary
 		for rendering, though we should probably keep this to 1.
+27 Sept 2012
+	1.	Used a simple magnitude comparison to prevent triangles from rendering over triangles in front of them.
+	2.	Changed method for computing color, but the way I'm computing color is wrong to begin with, so using the right colors might be the next change. After that, I'll need to work on accelerating rendering by not testing every single triangle.
