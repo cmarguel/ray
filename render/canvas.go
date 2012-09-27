@@ -51,7 +51,7 @@ func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
 		if status != 1 {
 			c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
 		} else {
-			col := uint8(255 - ((i.Z - 2) * 255 / 5))
+			col := uint8(255 - ((i.Z + 4) * 255 / 8))
 			c.image.Set(x, y, color.RGBA{col, col, col, 255})
 			return
 		}
