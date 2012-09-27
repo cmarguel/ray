@@ -55,3 +55,7 @@ func (v Vector3) IsZero() bool {
 func (v Vector3) Times(a float64) Vector3 {
 	return Vector3{a * v.X, a * v.Y, a * v.Z}
 }
+
+func (v1 Vector3) DistanceSquared(v2 Vector3) float64 {
+	return v1.Minus(v2).MagnitudeSquared()
+}

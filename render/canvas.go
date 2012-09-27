@@ -1,6 +1,8 @@
 package render
 
 import (
+	//"fmt"
+	"math"
 	"image"
 	"image/color"
 	"image/draw"
@@ -46,21 +48,33 @@ func (c Canvas) Render(tri []geom.Triangle) {
 
 func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
 	ray := c.cameraSpaceRay(x, y)
+	nearestPointDistance := math.Inf(1)
 	for _, tri := range triangles {
 		i, status := ray.IntersectTriangle(tri)
-		if status != 1 {
-			c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
-		} else {
-			col := uint8(255 - ((i.Z + 4) * 255 / 8))
-			c.image.Set(x, y, color.RGBA{col, col, col, 255})
-			return
+		if status == 1 {
+			distance := i.DistanceSquared(c.camera.Eye)
+			if distance < nearestPointDistance {
+				// fmt.Println("inside")
+				col := uint8(255 - ((i.Z + 4) * 255 / 8))
+				c.image.Set(x, y, color.RGBA{col, col, col, 255})
+				nearestPointDistance = distance
+			}
 		}
 	}
+	if math.IsInf(nearestPointDistance, 1) {
+		c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
+	} 
 }
 
 func (c Canvas) render(triangles []geom.Triangle) {
+	//totalRays := c.Width*c.Height
+	//onePercent := totalRays / 100
 	for x := 0; x < c.Width; x++ {
 		for y := 0; y < c.Height; y++ {
+			//currentRays := x*c.Height + y
+			//if currentRays % (5*onePercent) == 0 {
+			//	fmt.Printf("%d percent\n", currentRays/onePercent)
+			//} 
 			c.raytrace(x, y, triangles)
 		}
 	}
