@@ -10,6 +10,7 @@ import (
 	"ray/geom"
 	"ray/mmath"
 	"ray/render"
+	"ray/world"
 )
 
 func randomlyOrientedTriangle() geom.Triangle {
@@ -53,19 +54,21 @@ func main() {
 	fmt.Println("Making basic image")
 
 	c := render.NewCanvasPNG(800, 600, "test.png")
+	wor := world.NewWorld()
 
 	numTriangles := 10
 	if len(os.Args) > 1 {
 		numTriangles, _ = strconv.Atoi(os.Args[1])
 	}
 
-	triangles := make([]geom.Triangle, 0, numTriangles)
+	// triangles := make([]geom.Triangle, 0, numTriangles)
 	for i := 0; i < numTriangles; i++ {
 		t := randomlyOrientedTriangle()
-		triangles = append(triangles, t)
+		// triangles = append(triangles, t)
+		wor.AddShape(t)
 	}
 
-	c.Render(triangles)
+	c.Render(wor)
 
 	fmt.Println("Done")
 

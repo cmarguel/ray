@@ -8,8 +8,8 @@ import (
 	"math"
 
 	"ray/camera"
-	"ray/geom"
 	"ray/output"
+	"ray/world"
 )
 
 type Drawable interface {
@@ -44,20 +44,20 @@ func (c Canvas) Set(x, y int, color color.Color) {
 	c.Set(x, y, color)
 }
 
-func (c Canvas) Render(tri []geom.Triangle) {
-	c.render(tri)
+func (c Canvas) Render(wor world.World) {
+	c.render(wor)
 
 	c.output.Output(c.image)
 }
 
-func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
+func (c Canvas) raytrace(x, y int, wor world.World) {
 	sample := camera.NewCameraSample(x, y)
 	ray := c.camera.GenerateRay(sample)
 
 	nearestPointDistance := math.Inf(1)
-	for _, tri := range triangles {
-		i, status := ray.IntersectTriangle(tri)
-		if status == 1 {
+	for _, shape := range wor.Shapes {
+		i, found := shape.Intersect(ray)
+		if found {
 			distance := i.DistanceSquared(c.camera.GetPos())
 			if distance < nearestPointDistance {
 				// fmt.Println("inside")
@@ -72,7 +72,7 @@ func (c Canvas) raytrace(x, y int, triangles []geom.Triangle) {
 	}
 }
 
-func (c Canvas) render(triangles []geom.Triangle) {
+func (c Canvas) render(wor world.World) {
 	//totalRays := c.Width*c.Height
 	//onePercent := totalRays / 100
 	for x := 0; x < c.Width; x++ {
@@ -81,7 +81,7 @@ func (c Canvas) render(triangles []geom.Triangle) {
 			//if currentRays % (5*onePercent) == 0 {
 			//	fmt.Printf("%d percent\n", currentRays/onePercent)
 			//} 
-			c.raytrace(x, y, triangles)
+			c.raytrace(x, y, wor)
 		}
 	}
 }
