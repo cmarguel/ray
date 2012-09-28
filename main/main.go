@@ -10,10 +10,11 @@ import (
 	"ray/geom"
 	"ray/mmath"
 	"ray/render"
+	"ray/shape"
 	"ray/world"
 )
 
-func randomlyOrientedTriangle() geom.Triangle {
+func randomlyOrientedTriangle() shape.Triangle {
 	scale := rand.Float64() + 0.5
 	rx := rand.Float64() * 2. * math.Pi
 	ry := rand.Float64() * 2. * math.Pi
@@ -37,7 +38,7 @@ func randomlyOrientedTriangle() geom.Triangle {
 	return triangle
 }
 
-func makeStaticTriangle() geom.Triangle {
+func makeStaticTriangle() shape.Triangle {
 	white := geom.Color{255, 255, 255}
 	p1 := geom.Vector3{0., 0., 0.}
 	p2 := geom.Vector3{0., 1., 0.}
@@ -47,7 +48,7 @@ func makeStaticTriangle() geom.Triangle {
 	v2 := geom.Vertex{p2, white}
 	v3 := geom.Vertex{p3, white}
 
-	return geom.Triangle{v1, v2, v3}
+	return shape.Triangle{v1, v2, v3}
 }
 
 func main() {
@@ -61,10 +62,8 @@ func main() {
 		numTriangles, _ = strconv.Atoi(os.Args[1])
 	}
 
-	// triangles := make([]geom.Triangle, 0, numTriangles)
 	for i := 0; i < numTriangles; i++ {
 		t := randomlyOrientedTriangle()
-		// triangles = append(triangles, t)
 		wor.AddShape(t)
 	}
 

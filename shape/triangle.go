@@ -1,17 +1,19 @@
-package geom
+package shape
 
 import (
 	"math"
+
+	"ray/geom"
 )
 
 type Triangle struct {
-	V1 Vertex
-	V2 Vertex
-	V3 Vertex
+	V1 geom.Vertex
+	V2 geom.Vertex
+	V3 geom.Vertex
 }
 
 // Adapted from http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
-func (t Triangle) Intersect(ray Ray) (Vector3, bool) {
+func (t Triangle) Intersect(ray geom.Ray) (geom.Vector3, bool) {
 	u := t.V2.P.Minus(t.V1.P)
 	v := t.V3.P.Minus(t.V1.P)
 	n := u.Cross(v)

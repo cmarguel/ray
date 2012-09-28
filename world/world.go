@@ -1,17 +1,17 @@
 package world
 
 import (
-	"ray/geom"
+	"ray/shape"
 )
 
 type World struct {
-	Shapes []geom.Shape
+	Shapes []shape.Shape
 }
 
 func NewWorld() World {
-	return World{make([]geom.Shape, 0)}
+	return World{make([]shape.Shape, 0)}
 }
 
-func (w *World) AddShape(shape geom.Shape) {
+func (w *World) AddShape(shape shape.Shape) {
 	w.Shapes = append(w.Shapes, shape)
 }

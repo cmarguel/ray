@@ -1,9 +1,5 @@
 package geom
 
-import (
-	"math"
-)
-
 type Point Vector3
 type Color Vector3
 
