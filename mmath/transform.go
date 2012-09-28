@@ -77,6 +77,20 @@ func (t Transform) RotateZ(angle float64) Transform {
 	return Transform{tr.Times(t.m)}
 }
 
+func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
+	dir := look.Minus(pos).Normalized()
+	left := up.Normalized().Cross(dir).Normalized()
+	newUp := dir.Cross(left)
+
+	tr := NewMatrix4x4(
+		left.X, newUp.X, dir.X, pos.X,
+		left.Y, newUp.Y, dir.Y, pos.Y,
+		left.Z, newUp.Z, dir.Z, pos.Z,
+		0, 0, 0, 1,
+	)
+	return Transform{tr.Times(t.m)}
+}
+
 func dot(v1, v2 []float64) float64 {
 	return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2] + v1[3]*v2[3]
 }

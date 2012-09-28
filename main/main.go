@@ -19,7 +19,7 @@ func randomlyOrientedTriangle() geom.Triangle {
 	rz := rand.Float64() * 2. * math.Pi
 	dx := rand.Float64()*8. - 4.
 	dy := rand.Float64()*8. - 4.
-	dz := rand.Float64()*8.
+	dz := rand.Float64() * 8.
 
 	transform := mmath.NewTransform().
 		Scale(scale, scale, scale).

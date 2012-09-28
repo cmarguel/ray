@@ -19,3 +19,7 @@ and am more or less making it up as I go along.
 27 Sept 2012
 	1.	Used a simple magnitude comparison to prevent triangles from rendering over triangles in front of them.
 	2.	Changed method for computing color, but the way I'm computing color is wrong to begin with, so using the right colors might be the next change. After that, I'll need to work on accelerating rendering by not testing every single triangle.
+
+28 Sept 2012
+	1.	Moving Camera into its own folder and implementing LookAt. This camera is a simple pinhole camera.
+	2.	On a related note, also moving GenerateRay to camera method, where it should really have been from the start.
