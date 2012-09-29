@@ -31,3 +31,4 @@ and am more or less making it up as I go along.
 		with Rubik colors to help me figure out what's going on with the perspective.
 	3.	Adding lighting, starting with a simple point light. Attenuation is quadratic.
 	4.	Will be making the cubes appear in more of a grid-like fashion.
+	5.	It seems that my Y-axis is inverted, and I think something might be wrong with the X-axis too.

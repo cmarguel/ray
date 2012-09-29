@@ -41,7 +41,7 @@ type PinholeCamera struct {
 }
 
 func NewPinholeCamera(film Film) PinholeCamera {
-	pos := geom.NewVector3(1., 0., 0)
+	pos := geom.NewVector3(0., 0., 0)
 	look := geom.NewVector3(0., 0., 1.)
 	up := geom.NewVector3(0, 1., 0)
 

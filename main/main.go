@@ -62,14 +62,16 @@ func makeGrid(r, c int) []shape.Cube {
 
 	for i := 0; i < r; i++ {
 		for j := 0; j < c; j++ {
-			z := j*0.5 + 0.2
-			x := i*0.5 - float64(r/2)
+			//z := float64(j)*0.5 + 0.2
+			//x := float64(i)*0.5 - float64(r/2)
+			x := float64(i)*0.75 - float64(r)/2.
+			z := float64(j)*0.75 + 0.75
 
 			height := math.Abs(z-highestZ) + math.Abs(x-highestX)
 
 			baseTransform := mmath.NewTransform().
-				Scale(0.25, height, 0.25).
-				Translate(x, 0, z)
+				Scale(0.25, height*0.25, 0.25).
+				Translate(x, 8.5-height/2., z)
 			cube := shape.NewCube()
 			cubes = append(cubes, cube.Transform(baseTransform))
 		}
@@ -117,7 +119,7 @@ func main() {
 	//cube3 = cube3.Transform(tr)
 	//wor.AddShape(cube3)
 
-	wor.AddLight(light.NewPointLight(1., 4., 4., 0.9, 0.9, 0.9))
+	wor.AddLight(light.NewPointLight(1., -2.5, 4., 10., 10., 10.))
 
 	c.Render(wor)
 
