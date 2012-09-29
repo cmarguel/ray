@@ -14,28 +14,30 @@ import (
 	"ray/world"
 )
 
-func randomlyOrientedTriangle() shape.Triangle {
+func randomTransform() mmath.Transform {
 	scale := rand.Float64() + 0.5
 	rx := rand.Float64() * 2. * math.Pi
 	ry := rand.Float64() * 2. * math.Pi
 	rz := rand.Float64() * 2. * math.Pi
 	dx := rand.Float64()*8. - 4.
 	dy := rand.Float64()*8. - 4.
-	dz := rand.Float64() * 8.
+	dz := rand.Float64()*4 + 4.
 
-	transform := mmath.NewTransform().
+	return mmath.NewTransform().
 		Scale(scale, scale, scale).
 		RotateX(rx).
 		RotateY(ry).
 		RotateZ(rz).
 		Translate(dx, dy, dz)
 
-	triangle := makeStaticTriangle()
-	triangle.V1.P = transform.Apply(triangle.V1.P)
-	triangle.V2.P = transform.Apply(triangle.V2.P)
-	triangle.V3.P = transform.Apply(triangle.V3.P)
+}
 
-	return triangle
+func randomlyOrientedTriangle() shape.Triangle {
+	transform := randomTransform()
+
+	triangle := makeStaticTriangle()
+	tr := triangle.Transform(transform)
+	return tr
 }
 
 func makeStaticTriangle() shape.Triangle {
@@ -66,6 +68,24 @@ func main() {
 		t := randomlyOrientedTriangle()
 		wor.AddShape(t)
 	}
+
+	numCubes := 10
+	if len(os.Args) > 2 {
+		numTriangles, _ = strconv.Atoi(os.Args[2])
+	}
+
+	for i := 0; i < numCubes; i++ {
+		c := shape.NewCube().Transform(randomTransform())
+		wor.AddShape(c)
+	}
+
+	//cube3 := shape.NewCube()
+	//tr := mmath.NewTransform().
+	//	Scale(0.15, 0.15, 0.15).
+	//	Translate(0, 0.5, 7.)
+
+	//cube3 = cube3.Transform(tr)
+	//wor.AddShape(cube3)
 
 	c.Render(wor)
 

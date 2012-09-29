@@ -4,12 +4,24 @@ import (
 	"math"
 
 	"ray/geom"
+	"ray/mmath"
 )
 
 type Triangle struct {
 	V1 geom.Vertex
 	V2 geom.Vertex
 	V3 geom.Vertex
+}
+
+func NewTriangle(
+	x1, y1, z1,
+	x2, y2, z2,
+	x3, y3, z3 float64) Triangle {
+	color := geom.Color{255, 255, 255}
+	v1 := geom.Vertex{geom.NewVector3(x1, y1, z1), color}
+	v2 := geom.Vertex{geom.NewVector3(x2, y2, z2), color}
+	v3 := geom.Vertex{geom.NewVector3(x3, y3, z3), color}
+	return Triangle{v1, v2, v3}
 }
 
 // Adapted from http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
@@ -62,4 +74,11 @@ func (t Triangle) Intersect(ray geom.Ray) (geom.Vector3, bool) {
 	}
 
 	return i, true // 1
+}
+
+func (triangle Triangle) Transform(transform mmath.Transform) Triangle {
+	triangle.V1.P = transform.Apply(triangle.V1.P)
+	triangle.V2.P = transform.Apply(triangle.V2.P)
+	triangle.V3.P = transform.Apply(triangle.V3.P)
+	return triangle
 }

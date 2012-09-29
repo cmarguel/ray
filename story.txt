@@ -24,3 +24,6 @@ and am more or less making it up as I go along.
 	1.	Moving Camera into its own folder and implementing LookAt. This camera is a simple pinhole camera.
 	2.	On a related note, also moving GenerateRay to camera method, where it should really have been from the start.
 	3.	Also, created a World struct for holding world info.
+
+29 Sept 2012
+	1.	Added cubes.
