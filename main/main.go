@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"ray/geom"
+	"ray/light"
 	"ray/mmath"
 	"ray/render"
 	"ray/shape"
@@ -53,6 +54,29 @@ func makeStaticTriangle() shape.Triangle {
 	return shape.Triangle{v1, v2, v3, geom.Color{255, 255, 255}}
 }
 
+func makeGrid(r, c int) []shape.Cube {
+	const highestX = 5.
+	const highestZ = 5.
+
+	cubes := make([]shape.Cube, 0, r*c)
+
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			z := j*0.5 + 0.2
+			x := i*0.5 - float64(r/2)
+
+			height := math.Abs(z-highestZ) + math.Abs(x-highestX)
+
+			baseTransform := mmath.NewTransform().
+				Scale(0.25, height, 0.25).
+				Translate(x, 0, z)
+			cube := shape.NewCube()
+			cubes = append(cubes, cube.Transform(baseTransform))
+		}
+	}
+	return cubes
+}
+
 func main() {
 	fmt.Println("Making basic image")
 
@@ -71,11 +95,17 @@ func main() {
 
 	numCubes := 10
 	if len(os.Args) > 2 {
-		numTriangles, _ = strconv.Atoi(os.Args[2])
+		numCubes, _ = strconv.Atoi(os.Args[2])
 	}
 
-	for i := 0; i < numCubes; i++ {
+	/* for i := 0; i < numCubes; i++ {
 		c := shape.NewCube().Transform(randomTransform())
+
+		wor.AddShape(c)
+	}*/
+
+	cubes := makeGrid(numCubes, numCubes)
+	for _, c := range cubes {
 		wor.AddShape(c)
 	}
 
@@ -86,6 +116,8 @@ func main() {
 
 	//cube3 = cube3.Transform(tr)
 	//wor.AddShape(cube3)
+
+	wor.AddLight(light.NewPointLight(1., 4., 4., 0.9, 0.9, 0.9))
 
 	c.Render(wor)
 

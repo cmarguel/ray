@@ -29,4 +29,5 @@ and am more or less making it up as I go along.
 	1.	Added cubes.
 	2.	I've temporarily added a color attribute to triangles so that I can color the cubes 
 		with Rubik colors to help me figure out what's going on with the perspective.
-	3.	Adding lighting, starting with a simple point light.
+	3.	Adding lighting, starting with a simple point light. Attenuation is quadratic.
+	4.	Will be making the cubes appear in more of a grid-like fashion.
