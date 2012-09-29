@@ -54,7 +54,9 @@ func (c PinholeCamera) GenerateRay(sample CameraSample) geom.Ray {
 	film := c.Film
 	x := float64(sample.ImageX - film.ResolutionX/2)
 	y := float64(sample.ImageY - film.ResolutionY/2)
-	dir := geom.NewVector3(x, y, 100.)
+	// Scale both components by just one component of the resolution. I suspect 
+	// it would look stretched out if we scaled x by x and y by y.
+	dir := geom.NewVector3(x/float64(film.ResolutionY), y/float64(film.ResolutionY), 0.25)
 	transformed := c.camToWorld.Apply(dir)
 
 	origin := c.Pos

@@ -5,5 +5,5 @@ import (
 )
 
 type Shape interface {
-	Intersect(ray geom.Ray) (geom.Vector3, bool)
+	Intersect(ray geom.Ray) (geom.Vector3, geom.Color, bool)
 }

@@ -50,7 +50,7 @@ func makeStaticTriangle() shape.Triangle {
 	v2 := geom.Vertex{p2, white}
 	v3 := geom.Vertex{p3, white}
 
-	return shape.Triangle{v1, v2, v3}
+	return shape.Triangle{v1, v2, v3, geom.Color{255, 255, 255}}
 }
 
 func main() {

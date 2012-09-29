@@ -27,3 +27,5 @@ and am more or less making it up as I go along.
 
 29 Sept 2012
 	1.	Added cubes.
+	2.	I've temporarily added a color attribute to triangles so that I can color the cubes 
+		with Rubik colors to help me figure out what's going on with the perspective.
