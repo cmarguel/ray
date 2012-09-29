@@ -42,6 +42,6 @@ func (b BBox) Inside(p geom.Vector3) bool {
 
 }
 
-func (b BBox) IntersectP(ray geom.Ray) (float64, float64) {
-	return 0, 0
+func (b BBox) IntersectP(ray geom.Ray) (float64, float64, bool) {
+	return 0, 0, false
 }
