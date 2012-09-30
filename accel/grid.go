@@ -3,6 +3,7 @@ package accel
 import (
 	"container/list"
 	"math"
+	"ray/geom"
 	"ray/mmath"
 )
 
@@ -64,8 +65,25 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 		voxels[i] = new(Voxel)
 	}
 
+	// find voxel extent 
+	for e := p.Front(); e != nil; e = e.Next() {
+		pb := e.Value.(Primitive).WorldBound()
+		vmin := make([]int, 3)
+		vmax := make([]int, 3)
+
+		for axis := 0; axis < 3; axis++ {
+			vmin[axis] = posToVoxel(pb.Min, axis, bounds, invWidth, nVoxels)
+			vmax[axis] = posToVoxel(pb.Max, axis, bounds, invWidth, nVoxels)
+		}
+	}
+
 	// add primitives
 	// create reader-writer mutex
 
 	return *new(Grid)
+}
+
+func posToVoxel(p geom.Vector3, axis int, bounds BBox, invWidth []float64, nVoxels []int) int {
+	v := int((p.Vals()[axis] - bounds.Min.Vals()[axis]) * invWidth[axis])
+	return mmath.ClampInt(v, 0, nVoxels[axis]-1)
 }
