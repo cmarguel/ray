@@ -42,6 +42,52 @@ func (b BBox) Inside(p geom.Vector3) bool {
 
 }
 
+func getNewInterval(t0, t1, tNear, tFar float64) (float64, float64, bool) {
+	if tNear > tFar {
+		tNear, tFar = tFar, tNear
+	}
+	if tNear > t0 {
+		t0 = tNear
+	}
+	if tFar < t1 {
+		t1 = tFar
+	}
+
+	if t0 > t1 {
+		return t0, t1, false
+	}
+
+	return t0, t1, true
+}
+
 func (b BBox) IntersectP(ray geom.Ray) (float64, float64, bool) {
-	return 0, 0, false
+	t0 := *ray.MinT
+	t1 := *ray.MaxT
+	status := false
+
+	invRayDirX := 1. / ray.Direction.X
+	tNearX := (b.Min.X - ray.Origin.X) * invRayDirX
+	tFarX := (b.Max.X - ray.Origin.X) * invRayDirX
+	t0, t1, status = getNewInterval(t0, t1, tNearX, tFarX)
+	if !status {
+		return t0, t1, false
+	}
+
+	invRayDirY := 1. / ray.Direction.Y
+	tNearY := (b.Min.Y - ray.Origin.Y) * invRayDirY
+	tFarY := (b.Max.Y - ray.Origin.Y) * invRayDirY
+	t0, t1, status = getNewInterval(t0, t1, tNearY, tFarY)
+	if !status {
+		return t0, t1, false
+	}
+
+	invRayDirZ := 1. / ray.Direction.Z
+	tNearZ := (b.Min.Z - ray.Origin.Z) * invRayDirZ
+	tFarZ := (b.Max.Z - ray.Origin.Z) * invRayDirZ
+	t0, t1, status = getNewInterval(t0, t1, tNearZ, tFarZ)
+	if !status {
+		return t0, t1, false
+	}
+
+	return t0, t1, true
 }
