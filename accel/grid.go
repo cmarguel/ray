@@ -107,3 +107,18 @@ func posToVoxel(p geom.Vector3, axis int, bounds geom.BBox, invWidth []float64, 
 	v := int((p.Vals()[axis] - bounds.Min.Vals()[axis]) * invWidth[axis])
 	return mmath.ClampInt(v, 0, nVoxels[axis]-1)
 }
+
+func (g Grid) WorldBound() geom.BBox {
+	return *new(geom.BBox)
+}
+
+func (g Grid) CanIntersect() bool {
+	return false
+}
+
+func (g Grid) Intersect(*geom.Ray) (Intersection, bool) {
+	return *new(Intersection), false
+}
+
+func (g Grid) Refine(*list.List) {
+}

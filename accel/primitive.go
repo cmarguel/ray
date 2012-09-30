@@ -17,7 +17,7 @@ type Intersection struct {
 type Primitive interface {
 	WorldBound() geom.BBox
 	CanIntersect() bool
-	Intersect(geom.Ray) (Intersection, bool)
+	Intersect(*geom.Ray) (Intersection, bool)
 	Refine(*list.List)
 }
 
