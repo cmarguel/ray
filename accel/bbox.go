@@ -19,10 +19,12 @@ func NewBBoxEmpty() BBox {
 	return BBox{min, max}
 }
 
-func NewBBox(p1, p2 geom.Vector3) BBox {
-	min := geom.NewVector3(math.Min(p1.X, p2.X), math.Min(p1.Y, p2.Y), math.Min(p1.Z, p2.Z))
-	max := geom.NewVector3(math.Max(p1.X, p2.X), math.Max(p1.Y, p2.Y), math.Max(p1.Z, p2.Z))
-	return BBox{min, max}
+func NewBBox(points ...geom.Vector3) BBox {
+	box := NewBBoxEmpty()
+	for _, p := range points {
+		box = box.AddPoint(p)
+	}
+	return box
 }
 
 func (b BBox) AddPoint(p geom.Vector3) BBox {
