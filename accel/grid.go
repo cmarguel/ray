@@ -32,7 +32,10 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 	}
 	delta := bounds.Max.Minus(bounds.Min)
 	// find voxelsPerUnitDist
-	voxelsPerUnitDist := 0.
+	maxAxis := bounds.MaximumExtent()
+	invMaxWidth := 1. / delta.Vals()[maxAxis]
+	cubeRoot := 3. * math.Pow(float64(primitives.Len()), 1./3.)
+	voxelsPerUnitDist := cubeRoot * invMaxWidth
 
 	for axis, del := range delta.Vals() {
 		// This is a round function that will only work if the value is positive, which 

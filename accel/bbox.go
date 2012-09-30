@@ -100,3 +100,14 @@ func (b BBox) IntersectP(ray geom.Ray) (float64, float64, bool) {
 
 	return t0, t1, true
 }
+
+func (b BBox) MaximumExtent() int {
+	diag := b.Max.Minus(b.Min)
+	if diag.X > diag.Y && diag.X > diag.Z {
+		return 0
+	} else if diag.Y > diag.Z {
+		return 1
+	}
+
+	return 2
+}
