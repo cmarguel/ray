@@ -10,6 +10,15 @@ type BBox struct {
 	Max geom.Vector3
 }
 
+func NewBBoxEmpty() BBox {
+	plus := math.Inf(1)
+	minus := math.Inf(-1)
+
+	max := geom.NewVector3(minus, minus, minus)
+	min := geom.NewVector3(plus, plus, plus)
+	return BBox{min, max}
+}
+
 func NewBBox(p1, p2 geom.Vector3) BBox {
 	min := geom.NewVector3(math.Min(p1.X, p2.X), math.Min(p1.Y, p2.Y), math.Min(p1.Z, p2.Z))
 	max := geom.NewVector3(math.Max(p1.X, p2.X), math.Max(p1.Y, p2.Y), math.Max(p1.Z, p2.Z))

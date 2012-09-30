@@ -20,3 +20,7 @@ func (p GeometricPrimitive) Intersect(ray geom.Ray) (Intersection, bool) {
 
 func (p GeometricPrimitive) Refine(*list.List) {
 }
+
+func (p GeometricPrimitive) WorldBound() BBox {
+	return *new(BBox)
+}
