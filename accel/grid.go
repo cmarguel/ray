@@ -10,6 +10,7 @@ type Grid struct {
 	primitives *list.List
 	bounds     BBox
 	nVoxels    []int
+	voxels     []*Voxel
 }
 
 func NewGrid(p *list.List, refineImmediately bool) Grid {
@@ -17,6 +18,8 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 	var primitives *list.List = nil
 	bounds := NewBBoxEmpty()
 	nVoxels := make([]int, 3)
+	width := make([]float64, 3)
+	invWidth := make([]float64, 3)
 
 	if refineImmediately {
 		primitives = list.New()
@@ -45,6 +48,22 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 	}
 
 	// compute voxel widths, allocate voxels
+	for axis, del := range delta.Vals() {
+		width[axis] = del / float64(nVoxels[axis])
+		if width[axis] == 0. {
+			invWidth[axis] = 0
+		} else {
+			invWidth[axis] = 1. / width[axis]
+		}
+	}
+	nv := nVoxels[0] * nVoxels[1] * nVoxels[2]
+	// In PBRT, this allocation was done via an aligned allocate, in order to be cache friendly.
+	// I don't think we can do anything about that in go.
+	voxels := make([]*Voxel, nv)
+	for i := range voxels {
+		voxels[i] = new(Voxel)
+	}
+
 	// add primitives
 	// create reader-writer mutex
 
