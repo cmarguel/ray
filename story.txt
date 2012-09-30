@@ -35,3 +35,11 @@ and am more or less making it up as I go along.
 	
 30 Sept 2012
 	1.	Started with acceleration structures--primitives and bounding boxes.
+	2.	After much effort, finally finished the constructor for GridAccelerator. I think in the future,
+		the appropriate way to port a C++/Java style constructor with lots of processing would be to 
+		follow a pattern like this: 
+		NewFoo() Foo {
+			foo := Foo{}
+			foo.Initialize()
+		}
+		

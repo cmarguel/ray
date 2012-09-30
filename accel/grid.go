@@ -62,12 +62,13 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 	// I don't think we can do anything about that in go.
 	voxels := make([]*Voxel, nv)
 	for i := range voxels {
-		voxels[i] = new(Voxel)
+		voxels[i] = nil
 	}
 
 	// find voxel extent 
 	for e := p.Front(); e != nil; e = e.Next() {
-		pb := e.Value.(Primitive).WorldBound()
+		prim := e.Value.(Primitive)
+		pb := prim.WorldBound()
 		vmin := make([]int, 3)
 		vmax := make([]int, 3)
 
@@ -75,12 +76,31 @@ func NewGrid(p *list.List, refineImmediately bool) Grid {
 			vmin[axis] = posToVoxel(pb.Min, axis, bounds, invWidth, nVoxels)
 			vmax[axis] = posToVoxel(pb.Max, axis, bounds, invWidth, nVoxels)
 		}
+
+		// add primitives
+		for z := vmin[2]; z <= vmax[2]; z++ {
+			for y := vmin[1]; y <= vmax[1]; y++ {
+				for x := vmin[0]; x <= vmax[0]; x++ {
+					o := offset(x, y, z, nVoxels)
+					if voxels[o] == nil {
+						vox := NewVoxel(prim)
+						voxels[o] = &vox
+					} else {
+						voxels[o].AddPrimitive(prim)
+					}
+				}
+			}
+		}
+
 	}
 
-	// add primitives
 	// create reader-writer mutex
 
-	return *new(Grid)
+	return Grid{primitives, bounds, nVoxels, voxels}
+}
+
+func offset(x, y, z int, nVoxels []int) int {
+	return z*nVoxels[0]*nVoxels[1] + y*nVoxels[0] + x
 }
 
 func posToVoxel(p geom.Vector3, axis int, bounds BBox, invWidth []float64, nVoxels []int) int {
