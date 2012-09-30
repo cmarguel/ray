@@ -121,3 +121,11 @@ func (c Cube) Transform(transform mmath.Transform) Cube {
 	c.triangles = newTriangles
 	return c
 }
+
+func (c Cube) WorldBound() geom.BBox {
+	box := geom.NewBBoxEmpty()
+	for _, t := range c.triangles {
+		box = box.Union(t.WorldBound())
+	}
+	return box
+}

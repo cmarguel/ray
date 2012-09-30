@@ -42,4 +42,5 @@ and am more or less making it up as I go along.
 			foo := Foo{}
 			foo.Initialize()
 		}
-		
+	3.	At the moment, the grid accelerator will not be supporting multiple threads. Specifically, I
+		will leave creating write locks on the grid for later.

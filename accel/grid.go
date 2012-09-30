@@ -9,7 +9,7 @@ import (
 
 type Grid struct {
 	primitives *list.List
-	bounds     BBox
+	bounds     geom.BBox
 	nVoxels    []int
 	voxels     []*Voxel
 }
@@ -17,7 +17,7 @@ type Grid struct {
 func NewGrid(p *list.List, refineImmediately bool) Grid {
 	// initialize primitives
 	var primitives *list.List = nil
-	bounds := NewBBoxEmpty()
+	bounds := geom.NewBBoxEmpty()
 	nVoxels := make([]int, 3)
 	width := make([]float64, 3)
 	invWidth := make([]float64, 3)
@@ -103,7 +103,7 @@ func offset(x, y, z int, nVoxels []int) int {
 	return z*nVoxels[0]*nVoxels[1] + y*nVoxels[0] + x
 }
 
-func posToVoxel(p geom.Vector3, axis int, bounds BBox, invWidth []float64, nVoxels []int) int {
+func posToVoxel(p geom.Vector3, axis int, bounds geom.BBox, invWidth []float64, nVoxels []int) int {
 	v := int((p.Vals()[axis] - bounds.Min.Vals()[axis]) * invWidth[axis])
 	return mmath.ClampInt(v, 0, nVoxels[axis]-1)
 }

@@ -2,7 +2,6 @@ package shape
 
 import (
 	"math"
-
 	"ray/geom"
 	"ray/mmath"
 )
@@ -83,4 +82,8 @@ func (triangle Triangle) Transform(transform mmath.Transform) Triangle {
 	triangle.V2.P = transform.Apply(triangle.V2.P)
 	triangle.V3.P = transform.Apply(triangle.V3.P)
 	return triangle
+}
+
+func (t Triangle) WorldBound() geom.BBox {
+	return geom.NewBBox(t.V1.P, t.V2.P, t.V3.P)
 }
