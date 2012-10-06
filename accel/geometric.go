@@ -16,9 +16,9 @@ func (p GeometricPrimitive) CanIntersect() bool {
 }
 
 func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
-	_, _, status := p.Shape.Intersect(ray)
+	dg, _, status := p.Shape.Intersect(ray)
 
-	intersect := Intersection{p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
+	intersect := Intersection{dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
 
 	return intersect, status
 }

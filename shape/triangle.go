@@ -27,13 +27,13 @@ func NewTriangle(
 }
 
 // Adapted from http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
-func (t Triangle) Intersect(ray *geom.Ray) (geom.Vector3, geom.Color, bool) {
+func (t Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, geom.Color, bool) {
 	u := t.V2.P.Minus(t.V1.P)
 	v := t.V3.P.Minus(t.V1.P)
 	n := u.Cross(v)
 
 	if n.IsZero() {
-		return n, t.Color, false // -1
+		return nil, t.Color, false // -1
 	}
 	dir := ray.Direction.Minus(ray.Origin)
 	w0 := ray.Origin.Minus(t.V1.P)
@@ -43,14 +43,14 @@ func (t Triangle) Intersect(ray *geom.Ray) (geom.Vector3, geom.Color, bool) {
 	const delta = 0.00000001
 	if math.Abs(b) < delta {
 		if math.Abs(a) < delta {
-			return n, t.Color, false // 2
+			return nil, t.Color, false // 2
 		} else {
-			return n, t.Color, false // 0
+			return nil, t.Color, false // 0
 		}
 	}
 	r := a / b
 	if r < 0. {
-		return n, t.Color, false // 0
+		return nil, t.Color, false // 0
 	}
 
 	i := ray.Origin.Plus(dir.Times(r))
@@ -67,15 +67,16 @@ func (t Triangle) Intersect(ray *geom.Ray) (geom.Vector3, geom.Color, bool) {
 
 	s := (uv*wv - vv*wu) / d
 	if s < 0. || s > 1. {
-		return i, t.Color, false // 0
+		return nil, t.Color, false // 0
 	}
 
 	tt := (uv*wu - uu*wv) / d
 	if tt < 0. || s+tt > 1. {
-		return i, t.Color, false // 0
+		return nil, t.Color, false // 0
 	}
 
-	return i, t.Color, true // 1
+	dg := DifferentialGeometry{i, t}
+	return &dg, t.Color, true // 1
 }
 
 func (triangle Triangle) Transform(transform mmath.Transform) Triangle {

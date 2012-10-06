@@ -56,13 +56,13 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 
 	nearestPointDistance := math.Inf(1)
 	for _, shape := range wor.Shapes {
-		i, colFound, found := shape.Intersect(ray)
+		dg, colFound, found := shape.Intersect(&ray)
 		if found {
-			distance := i.DistanceSquared(c.camera.GetPos())
+			distance := dg.P.DistanceSquared(c.camera.GetPos())
 			if distance < nearestPointDistance {
 				// fmt.Println("inside")
 				//col := uint8(255. * (1 - distance/64.)) // uint8(255 - ((i.Z + 4) * 255 / 8))
-				radiance := evaluateRadiance(wor, i)
+				radiance := evaluateRadiance(wor, dg)
 				rf, gf, bf := radiance.ToRGB()
 				rf *= colFound.X // 255
 				gf *= colFound.Y // 255
