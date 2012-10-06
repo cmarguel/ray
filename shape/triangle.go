@@ -1,6 +1,7 @@
 package shape
 
 import (
+	"container/list"
 	"math"
 	"ray/geom"
 	"ray/mmath"
@@ -26,7 +27,7 @@ func NewTriangle(
 }
 
 // Adapted from http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
-func (t Triangle) Intersect(ray geom.Ray) (geom.Vector3, geom.Color, bool) {
+func (t Triangle) Intersect(ray *geom.Ray) (geom.Vector3, geom.Color, bool) {
 	u := t.V2.P.Minus(t.V1.P)
 	v := t.V3.P.Minus(t.V1.P)
 	n := u.Cross(v)
@@ -86,4 +87,8 @@ func (triangle Triangle) Transform(transform mmath.Transform) Triangle {
 
 func (t Triangle) WorldBound() geom.BBox {
 	return geom.NewBBox(t.V1.P, t.V2.P, t.V3.P)
+}
+
+func (t Triangle) Refine(l *list.List) {
+	l.PushBack(t)
 }

@@ -21,6 +21,14 @@ type Primitive interface {
 	Refine(*list.List)
 }
 
+var currPrimitiveId uint = 1
+
+func nextPrimitiveId() uint {
+	c := currPrimitiveId
+	currPrimitiveId++
+	return c
+}
+
 func FullyRefine(p Primitive, refined *list.List) {
 	todo := list.New()
 	todo.PushBack(p)

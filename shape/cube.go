@@ -1,6 +1,7 @@
 package shape
 
 import (
+	"container/list"
 	"math"
 	"ray/geom"
 	"ray/mmath"
@@ -94,7 +95,7 @@ func NewCube() Cube {
 	return Cube{triangles}
 }
 
-func (c Cube) Intersect(ray geom.Ray) (geom.Vector3, geom.Color, bool) {
+func (c Cube) Intersect(ray *geom.Ray) (geom.Vector3, geom.Color, bool) {
 	nearest := math.Inf(1)
 	intersection := geom.NewVector3(0, 0, 0)
 	color := geom.Color{0, 0, 0}
@@ -128,4 +129,10 @@ func (c Cube) WorldBound() geom.BBox {
 		box = box.Union(t.WorldBound())
 	}
 	return box
+}
+
+func (c Cube) Refine(l *list.List) {
+	for _, t := range c.triangles {
+		t.Refine(l)
+	}
 }

@@ -3,6 +3,7 @@ package accel
 import (
 	"container/list"
 	"ray/geom"
+	"ray/mmath"
 	"ray/shape"
 )
 
@@ -14,11 +15,20 @@ func (p GeometricPrimitive) CanIntersect() bool {
 	return false
 }
 
-func (p GeometricPrimitive) Intersect(ray geom.Ray) (Intersection, bool) {
-	return *new(Intersection), false
+func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
+	_, _, status := p.Shape.Intersect(ray)
+
+	intersect := Intersection{p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
+
+	return intersect, status
 }
 
-func (p GeometricPrimitive) Refine(*list.List) {
+func (p GeometricPrimitive) Refine(todo *list.List) {
+	refinedShapes := list.New()
+	p.Shape.Refine(refinedShapes)
+	for e := refinedShapes.Front(); e != nil; e = e.Next() {
+		todo.PushBack(GeometricPrimitive{e.Value.(shape.Shape)})
+	}
 }
 
 func (p GeometricPrimitive) WorldBound() geom.BBox {
