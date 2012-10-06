@@ -1,17 +1,19 @@
 package world
 
 import (
+	"ray/accel"
 	"ray/light"
 	"ray/shape"
 )
 
 type World struct {
-	Shapes []shape.Shape
-	Lights []light.Light
+	Shapes    []shape.Shape
+	Aggregate accel.Primitive
+	Lights    []light.Light
 }
 
 func NewWorld() World {
-	return World{make([]shape.Shape, 0), make([]light.Light, 0)}
+	return World{make([]shape.Shape, 0), *new(accel.Primitive), make([]light.Light, 0)}
 }
 
 func (w *World) AddShape(shape shape.Shape) {

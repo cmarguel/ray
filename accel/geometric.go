@@ -11,6 +11,10 @@ type GeometricPrimitive struct {
 	Shape shape.Shape
 }
 
+func NewGeometricPrimitive(shape shape.Shape) GeometricPrimitive {
+	return GeometricPrimitive{shape}
+}
+
 func (p GeometricPrimitive) CanIntersect() bool {
 	return false
 }
@@ -18,7 +22,7 @@ func (p GeometricPrimitive) CanIntersect() bool {
 func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
 	dg, _, status := p.Shape.Intersect(ray)
 
-	intersect := Intersection{dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
+	intersect := Intersection{*dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
 
 	return intersect, status
 }

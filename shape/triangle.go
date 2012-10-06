@@ -2,7 +2,7 @@ package shape
 
 import (
 	"container/list"
-	"math"
+	// "math"
 	"ray/geom"
 	"ray/mmath"
 )
@@ -26,57 +26,38 @@ func NewTriangle(
 	return Triangle{v1, v2, v3, color}
 }
 
-// Adapted from http://www.softsurfer.com/Archive/algorithm_0105/algorithm_0105.htm
-func (t Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, geom.Color, bool) {
-	u := t.V2.P.Minus(t.V1.P)
-	v := t.V3.P.Minus(t.V1.P)
-	n := u.Cross(v)
-
-	if n.IsZero() {
-		return nil, t.Color, false // -1
+// Taken from PBRT. Mostly the same as the other one, but it'll be easier to work with 
+// PBRT's other features if I use their structure and naming conventions.
+func (tr Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, geom.Color, bool) {
+	e1 := tr.V2.P.Minus(tr.V1.P)
+	e2 := tr.V3.P.Minus(tr.V1.P)
+	rayD := ray.Direction.Minus(ray.Origin)
+	s1 := rayD.Cross(e2)
+	divisor := s1.Dot(e1)
+	if divisor == 0. {
+		return nil, *new(geom.Color), false
 	}
-	dir := ray.Direction.Minus(ray.Origin)
-	w0 := ray.Origin.Minus(t.V1.P)
-	a := -n.Dot(w0)
-	b := n.Dot(dir)
+	invDiv := 1. / divisor
 
-	const delta = 0.00000001
-	if math.Abs(b) < delta {
-		if math.Abs(a) < delta {
-			return nil, t.Color, false // 2
-		} else {
-			return nil, t.Color, false // 0
-		}
-	}
-	r := a / b
-	if r < 0. {
-		return nil, t.Color, false // 0
+	d := ray.Origin.Minus(tr.V1.P)
+	b1 := d.Dot(s1) * invDiv
+	if b1 < 0. || b1 > 1. {
+		return nil, *new(geom.Color), false
 	}
 
-	i := ray.Origin.Plus(dir.Times(r))
-
-	uu := u.Dot(u)
-	uv := u.Dot(v)
-	vv := v.Dot(v)
-
-	w := i.Minus(t.V1.P)
-	wu := w.Dot(u)
-	wv := w.Dot(v)
-
-	d := uv*uv - uu*vv
-
-	s := (uv*wv - vv*wu) / d
-	if s < 0. || s > 1. {
-		return nil, t.Color, false // 0
+	s2 := d.Cross(e1)
+	b2 := rayD.Dot(s2) * invDiv
+	if b2 < 0. || b1+b2 > 1. {
+		return nil, *new(geom.Color), false
 	}
 
-	tt := (uv*wu - uu*wv) / d
-	if tt < 0. || s+tt > 1. {
-		return nil, t.Color, false // 0
+	t := e2.Dot(s2) * invDiv
+	if t < *ray.MinT || t > *ray.MaxT {
+		return nil, *new(geom.Color), false
 	}
 
-	dg := DifferentialGeometry{i, t}
-	return &dg, t.Color, true // 1
+	dg := DifferentialGeometry{ray.At(t), tr}
+	return &dg, tr.Color, true
 }
 
 func (triangle Triangle) Transform(transform mmath.Transform) Triangle {

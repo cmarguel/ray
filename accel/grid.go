@@ -117,6 +117,10 @@ func (g Grid) CanIntersect() bool {
 }
 
 func (g Grid) Intersect(*geom.Ray) (Intersection, bool) {
+	// Check ray against overall grid bounds
+	// Set up 3d dda for ray
+	// walk ray through voxel grid
+
 	return *new(Intersection), false
 }
 
