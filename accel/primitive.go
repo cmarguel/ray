@@ -25,8 +25,7 @@ func FullyRefine(p Primitive, refined *list.List) {
 	todo := list.New()
 	todo.PushBack(p)
 	for todo.Len() > 0 {
-		prim := todo.Back().Value.(Primitive)
-		todo.Remove(todo.Back())
+		prim := todo.Remove(todo.Back()).(Primitive)
 		if prim.CanIntersect() {
 			refined.PushBack(prim)
 		} else {
