@@ -95,22 +95,24 @@ func NewCube() Cube {
 	return Cube{triangles}
 }
 
-func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, geom.Color, bool) {
+func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geom.Color, bool) {
 	nearest := math.Inf(1)
 	var diffGeom *DifferentialGeometry = nil
 	color := geom.Color{0, 0, 0}
+	tHit := 0.
 	for _, t := range c.triangles {
-		dg, col, found := t.Intersect(ray)
+		dg, tH, col, found := t.Intersect(ray)
 		if found {
 			distance := dg.P.DistanceSquared(ray.Origin)
 			if distance < nearest {
 				nearest = distance
 				diffGeom = dg
 				color = col
+				tHit = tH
 			}
 		}
 	}
-	return diffGeom, color, !math.IsInf(nearest, 1)
+	return diffGeom, tHit, color, !math.IsInf(nearest, 1)
 }
 
 func (c Cube) Transform(transform mmath.Transform) Cube {

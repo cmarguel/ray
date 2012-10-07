@@ -28,36 +28,36 @@ func NewTriangle(
 
 // Taken from PBRT. Mostly the same as the other one, but it'll be easier to work with 
 // PBRT's other features if I use their structure and naming conventions.
-func (tr Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, geom.Color, bool) {
+func (tr Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geom.Color, bool) {
 	e1 := tr.V2.P.Minus(tr.V1.P)
 	e2 := tr.V3.P.Minus(tr.V1.P)
 	rayD := ray.Direction.Minus(ray.Origin)
 	s1 := rayD.Cross(e2)
 	divisor := s1.Dot(e1)
 	if divisor == 0. {
-		return nil, *new(geom.Color), false
+		return nil, 0, *new(geom.Color), false
 	}
 	invDiv := 1. / divisor
 
 	d := ray.Origin.Minus(tr.V1.P)
 	b1 := d.Dot(s1) * invDiv
 	if b1 < 0. || b1 > 1. {
-		return nil, *new(geom.Color), false
+		return nil, 0, *new(geom.Color), false
 	}
 
 	s2 := d.Cross(e1)
 	b2 := rayD.Dot(s2) * invDiv
 	if b2 < 0. || b1+b2 > 1. {
-		return nil, *new(geom.Color), false
+		return nil, 0, *new(geom.Color), false
 	}
 
 	t := e2.Dot(s2) * invDiv
 	if t < *ray.MinT || t > *ray.MaxT {
-		return nil, *new(geom.Color), false
+		return nil, 0, *new(geom.Color), false
 	}
 
 	dg := DifferentialGeometry{ray.At(t), tr}
-	return &dg, tr.Color, true
+	return &dg, t, tr.Color, true
 }
 
 func (triangle Triangle) Transform(transform mmath.Transform) Triangle {

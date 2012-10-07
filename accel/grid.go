@@ -89,7 +89,7 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 		for z := vmin[2]; z <= vmax[2]; z++ {
 			for y := vmin[1]; y <= vmax[1]; y++ {
 				for x := vmin[0]; x <= vmax[0]; x++ {
-					o := offset(x, y, z, g.nVoxels)
+					o := g.offset(x, y, z)
 					if g.voxels[o] == nil {
 						vox := NewVoxel(prim)
 						g.voxels[o] = &vox
@@ -104,8 +104,12 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 
 }
 
-func offset(x, y, z int, nVoxels []int) int {
-	return z*nVoxels[0]*nVoxels[1] + y*nVoxels[0] + x
+func (g Grid) offset(x, y, z int) int {
+	return z*g.nVoxels[0]*g.nVoxels[1] + y*g.nVoxels[0] + x
+}
+
+func (g Grid) voxelToPos(p, axis int) float64 {
+	return g.bounds.Min.Vals()[axis] + float64(p)*g.width[axis]
 }
 
 func (g Grid) posToVoxel(p geom.Vector3, axis int) int {
@@ -123,18 +127,51 @@ func (g Grid) CanIntersect() bool {
 
 func (g Grid) Intersect(ray *geom.Ray) (Intersection, bool) {
 	gridIntersect, rayT, intersected := g.checkRayAgainstGridBounds(ray)
+	var intersect Intersection
 	if !intersected {
-		return *new(Intersection), false
+		return intersect, false
 	}
 
 	// Set up 3d dda for ray
+	nextCrossingT, deltaT, pos, step, out := g.setup3dDDA(ray, gridIntersect, rayT)
 
 	// walk ray through voxel grid
+	hitSomething := false
+	for {
+		// TODO mutex stuff here
+		// check for intersection in current voxel, advance to next
+		voxel := g.voxels[g.offset(pos[0], pos[1], pos[2])]
+		if voxel != nil {
+			hit := false
+			intersect, hit = voxel.Intersect(ray)
+			hitSomething = hitSomething || hit
+		}
 
-	return *new(Intersection), false
+		stepAxis := g.computeStepAxis(nextCrossingT)
+
+		if *ray.MaxT < nextCrossingT[stepAxis] {
+			break
+		}
+		pos[stepAxis] += step[stepAxis]
+		if pos[stepAxis] == out[stepAxis] {
+			break
+		}
+		nextCrossingT[stepAxis] += deltaT[stepAxis]
+	}
+
+	return intersect, hitSomething
 }
 
-func (g Grid) setup3dDDA(ray *geom.Ray) {
+func (g Grid) computeStepAxis(next []float64) int {
+	if next[0] > next[1] && next[0] > next[2] {
+		return 0
+	} else if next[1] > next[2] && next[1] > next[0] {
+		return 1
+	}
+	return 2
+}
+
+func (g Grid) setup3dDDA(ray *geom.Ray, gridIntersect geom.Vector3, rayT float64) ([]float64, []float64, []int, []int, []int) {
 	nextCrossingT := make([]float64, 3)
 	deltaT := make([]float64, 3)
 	rayD := ray.Direction.Minus(ray.Origin)
@@ -145,12 +182,24 @@ func (g Grid) setup3dDDA(ray *geom.Ray) {
 
 	for axis := 0; axis < 3; axis++ {
 		// compute current voxel for axis
+		pos[axis] = g.posToVoxel(gridIntersect, axis)
+
 		if rayD.Vals()[axis] >= 0 {
 			// handle ray w/ pos direction 
+			nextCrossingT[axis] = rayT + (g.voxelToPos(pos[axis]+1, axis)-gridIntersect.Vals()[axis])/rayD.Vals()[axis]
+			deltaT[axis] = g.width[axis] / rayD.Vals()[axis]
+			step[axis] = 1
+			out[axis] = g.nVoxels[axis]
 		} else {
 			// handle ray w/ neg direction
+			nextCrossingT[axis] = rayT + (g.voxelToPos(pos[axis], axis)-gridIntersect.Vals()[axis])/rayD.Vals()[axis]
+			deltaT[axis] = -g.width[axis] / rayD.Vals()[axis]
+			step[axis] = -1
+			out[axis] = -1
 		}
 	}
+
+	return nextCrossingT, deltaT, pos, step, out
 }
 
 func (g Grid) checkRayAgainstGridBounds(ray *geom.Ray) (geom.Vector3, float64, bool) {
