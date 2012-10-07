@@ -2,6 +2,7 @@ package accel
 
 import (
 	"container/list"
+	"fmt"
 	"math"
 	"ray/geom"
 	"ray/mmath"
@@ -66,6 +67,7 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 		}
 	}
 	nv := g.nVoxels[0] * g.nVoxels[1] * g.nVoxels[2]
+	fmt.Println("voxel grid has dimensions: ", g.nVoxels[0], g.nVoxels[1], g.nVoxels[2])
 	// In PBRT, this allocation was done via an aligned allocate, in order to be cache friendly.
 	// I don't think we can do anything about that in go.
 	g.voxels = make([]*Voxel, nv)

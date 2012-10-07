@@ -103,7 +103,7 @@ func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geom.Col
 	for _, t := range c.triangles {
 		dg, tH, col, found := t.Intersect(ray)
 		if found {
-			distance := dg.P.DistanceSquared(ray.Origin)
+			distance := tH
 			if distance < nearest {
 				nearest = distance
 				diffGeom = dg
@@ -112,6 +112,7 @@ func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geom.Col
 			}
 		}
 	}
+
 	return diffGeom, tHit, color, !math.IsInf(nearest, 1)
 }
 

@@ -44,4 +44,11 @@ and am more or less making it up as I go along.
 		}
 	3.	At the moment, the grid accelerator will not be supporting multiple threads. Specifically, I
 		will leave creating write locks on the grid for later.
-	4.  Implemented refine methods and created DifferentialGeometry objects.
+
+7 Oct 2012
+	1.  Implemented refine methods and created DifferentialGeometry objects.
+	
+8 Oct 2012
+	2.  Finished grid accelerator, somewhat, but it's creating voxel grids of size 1x1x1, which kind 
+		of defeats the purpose. On the other hand, the rendering time has gone down from 15 minutes
+		to 6 minutes for rendering 2700 triangles. Gotta look more into this.

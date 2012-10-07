@@ -58,6 +58,7 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 	intersect, found := wor.Aggregate.Intersect(&ray)
 	radiance := evaluateRadiance(wor, &intersect.DiffGeom)
 	rf, gf, bf := radiance.ToRGB()
+	// fmt.Println(uint8(rf*255), uint8(gf*255), uint8(bf*255))
 	col := color.RGBA{uint8(rf * 255), uint8(gf * 255), uint8(bf * 255), 255}
 	c.image.Set(x, y, col)
 
@@ -92,7 +93,7 @@ func (c Canvas) render(wor world.World) {
 	for x := 0; x < c.Width; x++ {
 		for y := 0; y < c.Height; y++ {
 			currentRays := x*c.Height + y
-			if currentRays%(onePercent) == 0 {
+			if currentRays%(10*onePercent) == 0 {
 				fmt.Printf("%d percent\n", currentRays/onePercent)
 			}
 			c.raytrace(x, y, wor)

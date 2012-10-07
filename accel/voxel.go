@@ -41,10 +41,10 @@ func (v Voxel) findIntersections(ray *geom.Ray) (Intersection, bool) {
 
 	for e := v.Primitives.Front(); e != nil; e = e.Next() {
 		prim := e.Value.(Primitive)
-		found := false
-		intersection, found = prim.Intersect(ray)
+		isect, found := prim.Intersect(ray)
 		if found {
 			hitSomething = true
+			intersection = isect
 		}
 	}
 	return intersection, hitSomething
