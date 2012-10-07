@@ -1,11 +1,11 @@
 package render
 
 import (
-	//"fmt"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
-	"math"
+	//"math"
 
 	"ray/camera"
 	"ray/output"
@@ -54,8 +54,14 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 	sample := camera.NewCameraSample(x, y)
 	ray := c.camera.GenerateRay(sample)
 
-	nearestPointDistance := math.Inf(1)
-	for _, shape := range wor.Shapes {
+	// nearestPointDistance := math.Inf(1)
+	intersect, found := wor.Aggregate.Intersect(&ray)
+	radiance := evaluateRadiance(wor, &intersect.DiffGeom)
+	rf, gf, bf := radiance.ToRGB()
+	col := color.RGBA{uint8(rf * 255), uint8(gf * 255), uint8(bf * 255), 255}
+	c.image.Set(x, y, col)
+
+	/*for _, shape := range wor.Shapes {
 		dg, colFound, found := shape.Intersect(&ray)
 		if found {
 			distance := dg.P.DistanceSquared(c.camera.GetPos())
@@ -73,21 +79,22 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 				nearestPointDistance = distance
 			}
 		}
-	}
-	if math.IsInf(nearestPointDistance, 1) {
+	}*/
+	// if math.IsInf(nearestPointDistance, 1) {
+	if !found {
 		c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
 	}
 }
 
 func (c Canvas) render(wor world.World) {
-	//totalRays := c.Width*c.Height
-	//onePercent := totalRays / 100
+	totalRays := c.Width * c.Height
+	onePercent := totalRays / 100
 	for x := 0; x < c.Width; x++ {
 		for y := 0; y < c.Height; y++ {
-			//currentRays := x*c.Height + y
-			//if currentRays % (5*onePercent) == 0 {
-			//	fmt.Printf("%d percent\n", currentRays/onePercent)
-			//} 
+			currentRays := x*c.Height + y
+			if currentRays%(onePercent) == 0 {
+				fmt.Printf("%d percent\n", currentRays/onePercent)
+			}
 			c.raytrace(x, y, wor)
 		}
 	}

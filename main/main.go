@@ -1,12 +1,14 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"math"
 	"math/rand"
 	"os"
 	"strconv"
 
+	"ray/accel"
 	"ray/geom"
 	"ray/light"
 	"ray/mmath"
@@ -91,8 +93,8 @@ func main() {
 	}
 
 	for i := 0; i < numTriangles; i++ {
-		t := randomlyOrientedTriangle()
-		wor.AddShape(t)
+		// t := randomlyOrientedTriangle()
+		// wor.AddShape(t)
 	}
 
 	numCubes := 10
@@ -107,9 +109,15 @@ func main() {
 	}*/
 
 	cubes := makeGrid(numCubes, numCubes)
+	cubeList := list.New()
 	for _, c := range cubes {
-		wor.AddShape(c)
+		// wor.AddShape(c)
+		cubeList.PushBack(accel.NewGeometricPrimitive(c))
 	}
+	fmt.Println("Building grid...")
+	grid := accel.NewGrid(cubeList, false)
+	wor.SetPrimitive(grid)
+	fmt.Println("Done building grid!")
 
 	//cube3 := shape.NewCube()
 	//tr := mmath.NewTransform().

@@ -20,6 +20,10 @@ func (w *World) AddShape(shape shape.Shape) {
 	w.Shapes = append(w.Shapes, shape)
 }
 
+func (w *World) SetPrimitive(aggregate accel.Primitive) {
+	w.Aggregate = aggregate
+}
+
 func (w *World) AddLight(lite light.Light) {
 	w.Lights = append(w.Lights, lite)
 }

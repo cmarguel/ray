@@ -16,16 +16,19 @@ func NewGeometricPrimitive(shape shape.Shape) GeometricPrimitive {
 }
 
 func (p GeometricPrimitive) CanIntersect() bool {
-	return false
+	return true
 }
 
 func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
 	dg, tHit, _, status := p.Shape.Intersect(ray)
 
+	if !status {
+		return *new(Intersection), false
+	}
 	intersect := Intersection{*dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
 	*ray.MaxT = tHit
 
-	return intersect, status
+	return intersect, true
 }
 
 func (p GeometricPrimitive) Refine(todo *list.List) {
