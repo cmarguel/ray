@@ -43,6 +43,8 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 	for e := p.Front(); e != nil; e = e.Next() {
 		g.bounds = g.bounds.Union(e.Value.(Primitive).WorldBound())
 	}
+	fmt.Println("Max bounds: ", g.bounds.Max)
+	fmt.Println("Min bounds: ", g.bounds.Min)
 	delta := g.bounds.Max.Minus(g.bounds.Min)
 	// find voxelsPerUnitDist
 	maxAxis := g.bounds.MaximumExtent()

@@ -40,5 +40,5 @@ func (p GeometricPrimitive) Refine(todo *list.List) {
 }
 
 func (p GeometricPrimitive) WorldBound() geom.BBox {
-	return *new(geom.BBox)
+	return p.Shape.WorldBound()
 }
