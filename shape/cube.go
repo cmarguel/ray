@@ -21,9 +21,9 @@ func NewCube() Cube {
 		1, -1, -1,
 		1, 1, -1)
 
-	green := geom.Color{0, 255, 0}
-	side11.Color = green
-	side12.Color = green
+	//green := geom.Color{0, 255, 0}
+	//side11.Color = green
+	//side12.Color = green
 
 	side21 := NewTriangle(
 		1, 1, -1,
@@ -34,9 +34,9 @@ func NewCube() Cube {
 		1, -1, 1,
 		1, 1, 1)
 
-	red := geom.Color{255, 0, 0}
-	side21.Color = red
-	side22.Color = red
+	//red := geom.Color{255, 0, 0}
+	//side21.Color = red
+	//side22.Color = red
 
 	side31 := NewTriangle(
 		1, 1, 1,
@@ -47,9 +47,9 @@ func NewCube() Cube {
 		-1, -1, 1,
 		-1, 1, 1)
 
-	blue := geom.Color{0, 0, 255}
-	side31.Color = blue
-	side32.Color = blue
+	//blue := geom.Color{0, 0, 255}
+	//side31.Color = blue
+	//side32.Color = blue
 
 	side41 := NewTriangle(
 		-1, 1, 1,
@@ -60,9 +60,9 @@ func NewCube() Cube {
 		-1, -1, -1,
 		-1, 1, -1)
 
-	orange := geom.Color{255, 128, 0}
-	side41.Color = orange
-	side42.Color = orange
+	//orange := geom.Color{255, 128, 0}
+	//side41.Color = orange
+	//side42.Color = orange
 
 	side51 := NewTriangle(
 		1, 1, 1,
@@ -73,9 +73,9 @@ func NewCube() Cube {
 		1, 1, -1,
 		-1, 1, -1)
 
-	white := geom.Color{255, 255, 255}
-	side51.Color = white
-	side52.Color = white
+	//white := geom.Color{255, 255, 255}
+	//side51.Color = white
+	//side52.Color = white
 
 	side61 := NewTriangle(
 		-1, -1, 1,
@@ -86,34 +86,32 @@ func NewCube() Cube {
 		1, -1, -1,
 		1, -1, 1)
 
-	yellow := geom.Color{255, 255, 0}
-	side61.Color = yellow
-	side62.Color = yellow
+	//yellow := geom.Color{255, 255, 0}
+	//side61.Color = yellow
+	//side62.Color = yellow
 
 	triangles := []Triangle{side11, side12, side21, side22, side31, side32, side41, side42,
 		side51, side52, side61, side62}
 	return Cube{triangles}
 }
 
-func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geom.Color, bool) {
+func (c Cube) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, bool) {
 	nearest := math.Inf(1)
 	var diffGeom *DifferentialGeometry = nil
-	color := geom.Color{0, 0, 0}
 	tHit := 0.
 	for _, t := range c.triangles {
-		dg, tH, col, found := t.Intersect(ray)
+		dg, tH, found := t.Intersect(ray)
 		if found {
 			distance := tH
 			if distance < nearest {
 				nearest = distance
 				diffGeom = dg
-				color = col
 				tHit = tH
 			}
 		}
 	}
 
-	return diffGeom, tHit, color, !math.IsInf(nearest, 1)
+	return diffGeom, tHit, !math.IsInf(nearest, 1)
 }
 
 func (c Cube) Transform(transform mmath.Transform) Cube {
