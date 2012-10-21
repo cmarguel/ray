@@ -52,3 +52,13 @@ and am more or less making it up as I go along.
 	2.  Finished grid accelerator, somewhat, but it's creating voxel grids of size 1x1x1, which kind 
 		of defeats the purpose. On the other hand, the rendering time has gone down from 15 minutes
 		to 6 minutes for rendering 2700 triangles. Gotta look more into this.
+21 Oct 2012
+	1.	Found a really dumb mistake where I didn't implement a WorldBound method, so the grid 
+		accelerator was using just one voxel. Unfortunately, it seems my implementation of the grid 
+		accelerator is bugged, because not everything is rendered when I have more than one voxel.
+		Debugging tells me that the voxels seem to be populated properly, so I suspect that it's the
+		intersection method that's problematic.
+		Update: It figures--the one part I hacked up myself was the defective part--I misunderstood
+		how computeStepAxis was intended to work, so it was screwing things up majorly. I replaced it
+		with a closer approximation of the PBRT code and it worked. From 15 minutes down to 6 seconds.
+		Not bad.

@@ -2,7 +2,7 @@ package shape
 
 import (
 	"container/list"
-	// "math"
+	"math"
 	"ray/geom"
 	"ray/mmath"
 )
@@ -35,25 +35,25 @@ func (tr Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, geo
 	s1 := rayD.Cross(e2)
 	divisor := s1.Dot(e1)
 	if divisor == 0. {
-		return nil, 0, *new(geom.Color), false
+		return nil, math.Inf(1), *new(geom.Color), false
 	}
 	invDiv := 1. / divisor
 
 	d := ray.Origin.Minus(tr.V1.P)
 	b1 := d.Dot(s1) * invDiv
 	if b1 < 0. || b1 > 1. {
-		return nil, 0, *new(geom.Color), false
+		return nil, math.Inf(1), *new(geom.Color), false
 	}
 
 	s2 := d.Cross(e1)
 	b2 := rayD.Dot(s2) * invDiv
 	if b2 < 0. || b1+b2 > 1. {
-		return nil, 0, *new(geom.Color), false
+		return nil, math.Inf(1), *new(geom.Color), false
 	}
 
 	t := e2.Dot(s2) * invDiv
 	if t < *ray.MinT || t > *ray.MaxT {
-		return nil, 0, *new(geom.Color), false
+		return nil, math.Inf(1), *new(geom.Color), false
 	}
 
 	dg := DifferentialGeometry{ray.At(t), tr}

@@ -58,6 +58,7 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 		g.nVoxels[axis] = int(math.Floor(del*voxelsPerUnitDist + 0.5))
 		g.nVoxels[axis] = mmath.ClampInt(g.nVoxels[axis], 1, 64)
 	}
+	//g.nVoxels = []int{3, 3, 3}
 
 	// compute voxel widths, allocate voxels
 	for axis, del := range delta.Vals() {
@@ -97,15 +98,15 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 					if g.voxels[o] == nil {
 						vox := NewVoxel(prim)
 						g.voxels[o] = &vox
+						//fmt.Printf("(%d, %d, %d)\n", x, y, z)
 					} else {
 						g.voxels[o].AddPrimitive(prim)
+						//fmt.Printf("(%d, %d, %d)\n", x, y, z)
 					}
 				}
 			}
 		}
-
 	}
-
 }
 
 func (g Grid) offset(x, y, z int) int {
@@ -167,12 +168,26 @@ func (g Grid) Intersect(ray *geom.Ray) (Intersection, bool) {
 }
 
 func (g Grid) computeStepAxis(next []float64) int {
-	if next[0] > next[1] && next[0] > next[2] {
+	/*if next[0] >= next[1] && next[0] >= next[2] {
 		return 0
-	} else if next[1] > next[2] && next[1] > next[0] {
+	} else if next[1] >= next[2] && next[1] >= next[0] {
 		return 1
 	}
-	return 2
+	return 2*/
+	a := 0
+	b := 0
+	c := 0
+	if next[0] < next[1] {
+		a = 4
+	}
+	if next[0] < next[2] {
+		b = 2
+	}
+	if next[1] < next[2] {
+		c = 1
+	}
+	cmp := []int{2, 1, 2, 1, 2, 2, 0, 0}
+	return cmp[a+b+c]
 }
 
 func (g Grid) setup3dDDA(ray *geom.Ray, gridIntersect geom.Vector3, rayT float64) ([]float64, []float64, []int, []int, []int) {
