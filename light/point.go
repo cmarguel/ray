@@ -19,3 +19,7 @@ func (l PointLight) SampleL(point geom.Vector3) spectrum.RGBSpectrum {
 	normalizer := 1. / wi.MagnitudeSquared()
 	return l.Intensity.TimesC(normalizer)
 }
+
+func (l PointLight) IsDeltaLight() bool {
+	return true
+}

@@ -6,5 +6,6 @@ import (
 )
 
 type Light interface {
+	IsDeltaLight() bool
 	SampleL(point geom.Vector3) spectrum.RGBSpectrum
 }
