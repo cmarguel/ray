@@ -29,7 +29,7 @@ func NewTriangle(
 func (tr Triangle) Intersect(ray *geom.Ray) (*DifferentialGeometry, float64, bool) {
 	e1 := tr.V2.Minus(tr.V1)
 	e2 := tr.V3.Minus(tr.V1)
-	rayD := ray.Direction.Minus(ray.Origin)
+	rayD := ray.Direction
 	s1 := rayD.Cross(e2)
 	divisor := s1.Dot(e1)
 	if divisor == 0. {

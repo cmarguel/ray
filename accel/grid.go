@@ -193,7 +193,7 @@ func (g Grid) computeStepAxis(next []float64) int {
 func (g Grid) setup3dDDA(ray *geom.Ray, gridIntersect geom.Vector3, rayT float64) ([]float64, []float64, []int, []int, []int) {
 	nextCrossingT := make([]float64, 3)
 	deltaT := make([]float64, 3)
-	rayD := ray.Direction.Minus(ray.Origin)
+	rayD := ray.Direction
 
 	step := make([]int, 3)
 	out := make([]int, 3)

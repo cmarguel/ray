@@ -23,6 +23,5 @@ func NewRay(origin, direction Vector3) Ray {
 }
 
 func (r Ray) At(t float64) Vector3 {
-	d := r.Direction.Minus(r.Origin)
-	return r.Origin.Plus(d.Times(t))
+	return r.Origin.Plus(r.Direction.Times(t))
 }

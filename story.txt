@@ -62,3 +62,7 @@ and am more or less making it up as I go along.
 		how computeStepAxis was intended to work, so it was screwing things up majorly. I replaced it
 		with a closer approximation of the PBRT code and it worked. From 15 minutes down to 6 seconds.
 		Not bad.
+23 Oct 2012
+	1.	Started on proper lighting, but realized that I need to take a quick detour--at this point it's
+		going to get harder to stay in sync with the book if I don't fix my ray struct--direction should
+		be a unit vector and relative to <0,0,0>, rather than an absolute coordinate.

@@ -62,7 +62,7 @@ func (c PinholeCamera) GenerateRay(sample CameraSample) geom.Ray {
 	origin := c.Pos
 	newDir := transformed.Minus(c.Pos)
 	normalizer := 1. / newDir.Magnitude()
-	newDir = newDir.Times(normalizer).Plus(c.Pos)
+	newDir = newDir.Times(normalizer)
 	return geom.NewRay(origin, newDir)
 }
 
