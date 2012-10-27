@@ -137,3 +137,12 @@ func (c Cube) Refine(l *list.List) {
 		t.Refine(l)
 	}
 }
+
+func (c Cube) IntersectP(ray geom.Ray) bool {
+	for _, t := range c.triangles {
+		if t.IntersectP(ray) {
+			return true
+		}
+	}
+	return false
+}

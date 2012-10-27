@@ -66,3 +66,4 @@ and am more or less making it up as I go along.
 	1.	Started on proper lighting, but realized that I need to take a quick detour--at this point it's
 		going to get harder to stay in sync with the book if I don't fix my ray struct--direction should
 		be a unit vector and relative to <0,0,0>, rather than an absolute coordinate.
+	2.	I need to add IntersectP to the Primitive interface and implement it now.

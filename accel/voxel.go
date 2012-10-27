@@ -35,6 +35,32 @@ func (v Voxel) Intersect(ray *geom.Ray) (Intersection, bool) {
 	return v.findIntersections(ray)
 }
 
+func (v Voxel) IntersectP(ray geom.Ray) bool {
+	if !v.AllCanIntersect {
+		// TODO write lock here 
+		for e := v.Primitives.Front(); e != nil; e = e.Next() {
+			prim := e.Value.(Primitive)
+			refined := v.refine(prim)
+			e.Value = refined
+		}
+		v.AllCanIntersect = true
+		// TODO remove write lock
+	}
+
+	return v.findIntersectionsP(ray)
+}
+
+func (v Voxel) findIntersectionsP(ray geom.Ray) bool {
+	for e := v.Primitives.Front(); e != nil; e = e.Next() {
+		prim := e.Value.(Primitive)
+		found := prim.IntersectP(ray)
+		if found {
+			return true
+		}
+	}
+	return false
+}
+
 func (v Voxel) findIntersections(ray *geom.Ray) (Intersection, bool) {
 	hitSomething := false
 	var intersection = *new(Intersection)

@@ -3,6 +3,7 @@ package visibility
 import (
 	"math"
 	"ray/geom"
+	"ray/world"
 )
 
 type Tester struct {
@@ -28,4 +29,8 @@ func (t *Tester) SetRay(o, d geom.Vector3, eps, time float64) {
 	*t.R.MinT = eps
 	*t.R.MaxT = math.Inf(1)
 	*t.R.Time = time
+}
+
+func (t Tester) Unoccluded(scene world.World) {
+	return !scene.IntersectP(t.R)
 }

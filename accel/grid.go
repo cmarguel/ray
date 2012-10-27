@@ -240,3 +240,38 @@ func (g Grid) checkRayAgainstGridBounds(ray *geom.Ray) (geom.Vector3, float64, b
 
 func (g Grid) Refine(*list.List) {
 }
+
+func (g Grid) IntersectP(ray geom.Ray) bool {
+	gridIntersect, rayT, intersected := g.checkRayAgainstGridBounds(&ray)
+	if !intersected {
+		return false
+	}
+
+	// Set up 3d dda for ray
+	nextCrossingT, deltaT, pos, step, out := g.setup3dDDA(&ray, gridIntersect, rayT)
+
+	// walk ray through voxel grid
+	hitSomething := false
+	for {
+		// TODO mutex stuff here
+		// check for intersection in current voxel, advance to next
+		voxel := g.voxels[g.offset(pos[0], pos[1], pos[2])]
+		if voxel != nil {
+			if voxel.IntersectP(ray) {
+				return true
+			}
+		}
+		stepAxis := g.computeStepAxis(nextCrossingT)
+
+		if *ray.MaxT < nextCrossingT[stepAxis] {
+			break
+		}
+		pos[stepAxis] += step[stepAxis]
+		if pos[stepAxis] == out[stepAxis] {
+			break
+		}
+		nextCrossingT[stepAxis] += deltaT[stepAxis]
+	}
+
+	return hitSomething
+}

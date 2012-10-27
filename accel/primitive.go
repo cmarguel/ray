@@ -20,6 +20,7 @@ type Primitive interface {
 	WorldBound() geom.BBox
 	CanIntersect() bool
 	Intersect(*geom.Ray) (Intersection, bool)
+	IntersectP(geom.Ray) bool
 	Refine(*list.List)
 }
 

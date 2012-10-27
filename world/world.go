@@ -2,6 +2,7 @@ package world
 
 import (
 	"ray/accel"
+	"ray/geom"
 	"ray/light"
 	"ray/shape"
 )
@@ -26,4 +27,8 @@ func (w *World) SetPrimitive(aggregate accel.Primitive) {
 
 func (w *World) AddLight(lite light.Light) {
 	w.Lights = append(w.Lights, lite)
+}
+
+func (w *World) IntersectP(r geom.Ray) bool {
+	return w.Aggregate.IntersectP(r)
 }

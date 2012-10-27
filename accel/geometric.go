@@ -33,6 +33,10 @@ func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
 	return intersect, true
 }
 
+func (p GeometricPrimitive) IntersectP(ray geom.Ray) bool {
+	return p.Shape.IntersectP(ray)
+}
+
 func (p GeometricPrimitive) Refine(todo *list.List) {
 	refinedShapes := list.New()
 	p.Shape.Refine(refinedShapes)

@@ -72,3 +72,34 @@ func (t Triangle) WorldBound() geom.BBox {
 func (t Triangle) Refine(l *list.List) {
 	l.PushBack(t)
 }
+
+func (tr Triangle) IntersectP(ray geom.Ray) bool {
+	e1 := tr.V2.Minus(tr.V1)
+	e2 := tr.V3.Minus(tr.V1)
+	rayD := ray.Direction
+	s1 := rayD.Cross(e2)
+	divisor := s1.Dot(e1)
+	if divisor == 0. {
+		return false
+	}
+	invDiv := 1. / divisor
+
+	d := ray.Origin.Minus(tr.V1)
+	b1 := d.Dot(s1) * invDiv
+	if b1 < 0. || b1 > 1. {
+		return false
+	}
+
+	s2 := d.Cross(e1)
+	b2 := rayD.Dot(s2) * invDiv
+	if b2 < 0. || b1+b2 > 1. {
+		return false
+	}
+
+	t := e2.Dot(s2) * invDiv
+	if t < *ray.MinT || t > *ray.MaxT {
+		return false
+	}
+
+	return true
+}
