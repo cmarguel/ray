@@ -67,3 +67,9 @@ and am more or less making it up as I go along.
 		going to get harder to stay in sync with the book if I don't fix my ray struct--direction should
 		be a unit vector and relative to <0,0,0>, rather than an absolute coordinate.
 	2.	I need to add IntersectP to the Primitive interface and implement it now.
+	
+12 Nov 2012 
+	1.	Next up is to implement sampling. Instead of having one ray correspond to one pixel, I need
+		to take several samples per pixel, generate rays for those instead, then weight their 
+		contributions to individual pixels with a filter. It should be easy enough to start with a 
+		basic box or Gaussian filter.
