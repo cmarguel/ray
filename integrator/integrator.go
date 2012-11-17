@@ -1,7 +1,6 @@
 package integrator
 
 import (
-	//"ray/light"
 	"ray/accel"
 	"ray/light/spectrum"
 	"ray/world"

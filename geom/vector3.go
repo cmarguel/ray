@@ -60,6 +60,10 @@ func (v1 Vector3) DistanceSquared(v2 Vector3) float64 {
 	return v1.Minus(v2).MagnitudeSquared()
 }
 
+func (v1 Vector3) Distance(v2 Vector3) float64 {
+	return v1.Minus(v2).Magnitude()
+}
+
 func (v Vector3) Vals() []float64 {
 	return []float64{v.X, v.Y, v.Z}
 }

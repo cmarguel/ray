@@ -5,6 +5,7 @@ import (
 	"ray/geom"
 	"ray/light"
 	"ray/shape"
+	"ray/visibility"
 )
 
 type World struct {
@@ -31,4 +32,8 @@ func (w *World) AddLight(lite light.Light) {
 
 func (w *World) IntersectP(r geom.Ray) bool {
 	return w.Aggregate.IntersectP(r)
+}
+
+func (w World) Unoccluded(t visibility.Tester) bool {
+	return !w.IntersectP(t.R)
 }

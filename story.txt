@@ -77,3 +77,7 @@ and am more or less making it up as I go along.
 17 Nov 2012
 	1.	It seems I need to make a lot of classes in between if I want things to be less painful 
 		moving forward. Working on the Whitted Integrator and Visibility Tester now.
+	2.	In PBRT, Lights use VisibilityTesters, VisibilityTesters use Scenes, and Scenes use Lights.
+		The way I've organized things here, I had to put visibilityTester.Unoccluded in world 
+		instead. This might be incorrect design-wise, so I may have to rethink how the packages are 
+		structured.

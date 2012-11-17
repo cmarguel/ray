@@ -3,6 +3,7 @@ package light
 import (
 	"ray/geom"
 	"ray/light/spectrum"
+	"ray/visibility"
 )
 
 type PointLight struct {
@@ -16,10 +17,11 @@ func NewPointLight(x, y, z, r, g, b float64) PointLight {
 	return PointLight{geom.NewVector3(x, y, z), spectrum.FromRGB(r, g, b), 1}
 }
 
-func (l PointLight) SampleL(point geom.Vector3) spectrum.RGBSpectrum {
+func (l PointLight) SampleL(point geom.Vector3, tester visibility.Tester, pEpsilon, time float64) (spectrum.RGBSpectrum, geom.Vector3) {
 	wi := point.Minus(l.Pos)
 	normalizer := 1. / wi.MagnitudeSquared()
-	return l.Intensity.TimesC(normalizer)
+	tester.SetSegment(point, l.Pos, pEpsilon, 0., time)
+	return l.Intensity.TimesC(normalizer), l.Pos.Minus(point).Normalized()
 }
 
 func (l PointLight) IsDeltaLight() bool {
