@@ -3,18 +3,7 @@ package accel
 import (
 	"container/list"
 	"ray/geom"
-	"ray/mmath"
-	"ray/shape"
 )
-
-type Intersection struct {
-	DiffGeom      shape.DifferentialGeometry
-	Primitive     Primitive
-	WorldToObject mmath.Transform
-	ObjectToWorld mmath.Transform
-	PrimitiveId   uint
-	RayEpsilon    float64
-}
 
 type Primitive interface {
 	WorldBound() geom.BBox

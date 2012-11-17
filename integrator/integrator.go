@@ -1,7 +1,8 @@
-package render
+package integrator
 
 import (
 	//"ray/light"
+	"ray/accel"
 	"ray/light/spectrum"
 	"ray/world"
 )
@@ -11,7 +12,8 @@ type Integrator interface {
 }
 
 type SurfaceIntegrator interface {
-	Li(world.World) spectrum.RGBSpectrum
+	Integrator
+	Li(world.World, accel.Intersection) spectrum.RGBSpectrum
 }
 
 type DirectLightingIntegrator struct {

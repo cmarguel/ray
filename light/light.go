@@ -6,6 +6,7 @@ import (
 )
 
 type Light interface {
+	NSamples() int
 	IsDeltaLight() bool
 	SampleL(point geom.Vector3) spectrum.RGBSpectrum
 }

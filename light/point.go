@@ -8,10 +8,12 @@ import (
 type PointLight struct {
 	Pos       geom.Vector3
 	Intensity spectrum.RGBSpectrum
+
+	nSamples int
 }
 
 func NewPointLight(x, y, z, r, g, b float64) PointLight {
-	return PointLight{geom.NewVector3(x, y, z), spectrum.FromRGB(r, g, b)}
+	return PointLight{geom.NewVector3(x, y, z), spectrum.FromRGB(r, g, b), 1}
 }
 
 func (l PointLight) SampleL(point geom.Vector3) spectrum.RGBSpectrum {
@@ -22,4 +24,8 @@ func (l PointLight) SampleL(point geom.Vector3) spectrum.RGBSpectrum {
 
 func (l PointLight) IsDeltaLight() bool {
 	return true
+}
+
+func (l PointLight) NSamples() int {
+	return l.nSamples
 }

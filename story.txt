@@ -73,3 +73,7 @@ and am more or less making it up as I go along.
 		to take several samples per pixel, generate rays for those instead, then weight their 
 		contributions to individual pixels with a filter. It should be easy enough to start with a 
 		basic box or Gaussian filter.
+
+17 Nov 2012
+	1.	It seems I need to make a lot of classes in between if I want things to be less painful 
+		moving forward. Working on the Whitted Integrator and Visibility Tester now.
