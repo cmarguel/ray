@@ -18,8 +18,10 @@ type Renderer interface {
 
 func evaluateRadiance(wor world.World, dg *shape.DifferentialGeometry) spectrum.RGBSpectrum {
 	spec := spectrum.NewRGBSpectrum(0.0)
+
 	for _, light := range wor.Lights {
-		spec = spec.Plus(light.SampleL(dg.P))
+		spectrum, _, _ := light.SampleL(dg.P, 0, 0)
+		spec = spec.Plus(spectrum)
 	}
 	return spec.Clamp(0., math.Inf(1))
 }
