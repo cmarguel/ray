@@ -6,7 +6,7 @@ import (
 	"ray/geom"
 	//"ray/light"
 	"ray/light/spectrum"
-	"ray/shape"
+	//"ray/shape"
 	"ray/world"
 )
 
@@ -16,12 +16,14 @@ type Renderer interface {
 	Transmittance(wor world.World, ray geom.Ray) spectrum.RGBSpectrum
 }
 
-func evaluateRadiance(wor world.World, dg *shape.DifferentialGeometry) spectrum.RGBSpectrum {
+func evaluateRadiance(wor world.World, isect accel.Intersection) spectrum.RGBSpectrum {
 	spec := spectrum.NewRGBSpectrum(0.0)
 
 	for _, light := range wor.Lights {
-		spectrum, _, _ := light.SampleL(dg.P, 0, 0)
-		spec = spec.Plus(spectrum)
+		spectrum, _, tester := light.SampleL(isect.DiffGeom.P, isect.RayEpsilon, 0)
+		if wor.Unoccluded(*tester) {
+			spec = spec.Plus(spectrum)
+		}
 	}
 	return spec.Clamp(0., math.Inf(1))
 }

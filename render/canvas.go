@@ -56,7 +56,7 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 
 	// nearestPointDistance := math.Inf(1)
 	intersect, found := wor.Aggregate.Intersect(&ray)
-	radiance := evaluateRadiance(wor, &intersect.DiffGeom)
+	radiance := evaluateRadiance(wor, intersect)
 	rf, gf, bf := radiance.ToRGB()
 	// fmt.Println(uint8(rf*255), uint8(gf*255), uint8(bf*255))
 	col := color.RGBA{uint8(rf * 255), uint8(gf * 255), uint8(bf * 255), 255}

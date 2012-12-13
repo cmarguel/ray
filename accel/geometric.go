@@ -22,12 +22,12 @@ func (p GeometricPrimitive) CanIntersect() bool {
 }
 
 func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {
-	dg, tHit, status := p.Shape.Intersect(ray)
+	dg, tHit, eps, status := p.Shape.Intersect(ray)
 
 	if !status {
 		return *new(Intersection), false
 	}
-	intersect := Intersection{*dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), 0.001}
+	intersect := Intersection{*dg, p, *new(mmath.Transform), *new(mmath.Transform), nextPrimitiveId(), eps}
 	*ray.MaxT = tHit
 
 	return intersect, true

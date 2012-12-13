@@ -88,3 +88,13 @@ and am more or less making it up as I go along.
 		parallel. I may not have to ape too much from PBRT for this, since goroutines are fairly 
 		different from threads. I'm thinking that the appropriate thing to do is to create a fixed
 		number of goroutines which I pass tasks to.
+
+13 Dec 2012
+	1.	Something's weird--when I add a test that a point is unoccluded, several seemingly random
+		pixels fail to render. Either something is wrong with one of the IntersectP methods, or the
+		rays that SampleL is setting are incorrect (possibly going in the reverse direction 
+		they're supposed to?).
+		-- Okay, I tested the latter guess by reversing the direction of the rays in the 
+		visibilityTester. It seems my guess is incorrect, because the missing pixels don't render, 
+		but the occluded sides do render (with the same bug). My new suspicion is that the points
+		intersect with themselves.
