@@ -81,3 +81,10 @@ and am more or less making it up as I go along.
 		The way I've organized things here, I had to put visibilityTester.Unoccluded in world 
 		instead. This might be incorrect design-wise, so I may have to rethink how the packages are 
 		structured.
+		
+11 Dec 2012
+	1.	I've been unable to think of a way to correct the visibility tester compromise I made, so
+		now I am going to be working on splitting the rendering up into tasks that may be run in 
+		parallel. I may not have to ape too much from PBRT for this, since goroutines are fairly 
+		different from threads. I'm thinking that the appropriate thing to do is to create a fixed
+		number of goroutines which I pass tasks to.

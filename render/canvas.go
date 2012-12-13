@@ -88,6 +88,9 @@ func (c Canvas) raytrace(x, y int, wor world.World) {
 }
 
 func (c Canvas) render(wor world.World) {
+	runner := NewTaskRunner(4)
+	runner.Start()
+
 	totalRays := c.Width * c.Height
 	onePercent := totalRays / 100
 	for x := 0; x < c.Width; x++ {
