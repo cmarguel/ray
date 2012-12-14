@@ -21,7 +21,7 @@ func evaluateRadiance(wor world.World, isect accel.Intersection) spectrum.RGBSpe
 
 	for _, light := range wor.Lights {
 		spectrum, _, tester := light.SampleL(isect.DiffGeom.P, isect.RayEpsilon, 0)
-		if wor.Unoccluded(*tester) {
+		if (!spectrum.IsBlack()) && wor.Unoccluded(*tester) {
 			spec = spec.Plus(spectrum)
 		}
 	}

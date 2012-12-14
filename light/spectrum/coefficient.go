@@ -74,3 +74,12 @@ func (sp CoefficientSpectrum) Clamp(low, high float64) CoefficientSpectrum {
 	}
 	return sp
 }
+
+func (sp CoefficientSpectrum) IsBlack() bool {
+	for _, v := range sp.Vals {
+		if v != 0 {
+			return false
+		}
+	}
+	return true
+}
