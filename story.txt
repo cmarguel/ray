@@ -98,3 +98,10 @@ and am more or less making it up as I go along.
 		visibilityTester. It seems my guess is incorrect, because the missing pixels don't render, 
 		but the occluded sides do render (with the same bug). My new suspicion is that the points
 		intersect with themselves.
+		-- Fixed. PBRT confirmed my guess. I was not using RayEpsilon, which was meant to solve
+		this exact problem.
+		
+14 Dec 2012
+	1. 	I think I need to distribute the rendering across multiple tasks now before I can start
+		on sampling.
+		-- Added rudimentary task distribution, no sampling.

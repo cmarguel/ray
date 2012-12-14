@@ -1,6 +1,7 @@
 package integrator
 
 import (
+	"math"
 	"ray/accel"
 	"ray/light/spectrum"
 	"ray/world"
@@ -15,11 +16,15 @@ func NewWhitted() WhittedIntegrator {
 }
 
 func (w WhittedIntegrator) Li(wor world.World, isect accel.Intersection) spectrum.RGBSpectrum {
-	l := spectrum.NewRGBSpectrum(0)
+	spec := spectrum.NewRGBSpectrum(0.0)
 
-	l = l.Plus(isect.Le())
-
-	return l
+	for _, light := range wor.Lights {
+		spectrum, _, tester := light.SampleL(isect.DiffGeom.P, isect.RayEpsilon, 0)
+		if (!spectrum.IsBlack()) && wor.Unoccluded(*tester) {
+			spec = spec.Plus(spectrum)
+		}
+	}
+	return spec.Clamp(0., math.Inf(1))
 }
 
 func (w WhittedIntegrator) RequestSamples(world.World) {

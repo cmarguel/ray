@@ -8,7 +8,9 @@ import (
 	//"math"
 
 	"ray/camera"
+	"ray/integrator"
 	"ray/output"
+	"ray/render/sampler"
 	"ray/world"
 )
 
@@ -50,56 +52,54 @@ func (c Canvas) Render(wor world.World) {
 	c.output.Output(c.image)
 }
 
-func (c Canvas) raytrace(x, y int, wor world.World) {
+func (c Canvas) raytrace(x, y int, wor world.World, renderer sampler.Renderer) {
 	sample := camera.NewCameraSample(x, y)
 	ray := c.camera.GenerateRay(sample)
 
 	// nearestPointDistance := math.Inf(1)
 	intersect, found := wor.Aggregate.Intersect(&ray)
-	radiance := evaluateRadiance(wor, intersect)
+	radiance := renderer.Li(wor, intersect)
 	rf, gf, bf := radiance.ToRGB()
 	// fmt.Println(uint8(rf*255), uint8(gf*255), uint8(bf*255))
 	col := color.RGBA{uint8(rf * 255), uint8(gf * 255), uint8(bf * 255), 255}
 	c.image.Set(x, y, col)
 
-	/*for _, shape := range wor.Shapes {
-		dg, colFound, found := shape.Intersect(&ray)
-		if found {
-			distance := dg.P.DistanceSquared(c.camera.GetPos())
-			if distance < nearestPointDistance {
-				// fmt.Println("inside")
-				//col := uint8(255. * (1 - distance/64.)) // uint8(255 - ((i.Z + 4) * 255 / 8))
-				radiance := evaluateRadiance(wor, dg)
-				rf, gf, bf := radiance.ToRGB()
-				rf *= colFound.X // 255
-				gf *= colFound.Y // 255
-				bf *= colFound.Z // 255
-				col := color.RGBA{uint8(rf), uint8(gf), uint8(bf), 255}
-				// col := color.RGBA{uint8(colFound.X), uint8(colFound.Y), uint8(colFound.Z), 255}
-				c.image.Set(x, y, col)
-				nearestPointDistance = distance
-			}
-		}
-	}*/
 	// if math.IsInf(nearestPointDistance, 1) {
-	if !found {
+	if !found && x >= 0 && y >= 0 && x < c.Width && y < c.Height {
 		c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
 	}
 }
 
-func (c Canvas) render(wor world.World) {
-	//runner := NewTaskRunner(4)
-	//runner.Start()
-
-	totalRays := c.Width * c.Height
-	onePercent := totalRays / 100
-	for x := 0; x < c.Width; x++ {
-		for y := 0; y < c.Height; y++ {
-			currentRays := x*c.Height + y
-			if currentRays%(10*onePercent) == 0 {
-				fmt.Printf("%d percent\n", currentRays/onePercent)
-			}
-			c.raytrace(x, y, wor)
+func taskLogger(numTasks int, done <-chan int) {
+	i := 0
+	tenPercent := numTasks / 10
+	for d := range done {
+		i += d
+		if i%tenPercent == 0 {
+			fmt.Printf("%d%%\n", i*10/tenPercent)
 		}
 	}
+}
+
+func (c Canvas) render(wor world.World) {
+	const numRoutines = 8
+	runner := NewTaskRunner(numRoutines)
+	runner.Start()
+
+	whitted := integrator.NewWhitted()
+	renderer := sampler.NewRenderer(whitted)
+
+	totalRays := c.Width * c.Height
+	numTasks := totalRays/(16*16) + 1
+	go taskLogger(numTasks, runner.TasksDone)
+	fmt.Printf("%d tasks to do with %d goroutines\n", numTasks, numRoutines)
+	//onePercent := totalRays / 100
+	for x := 0; x < c.Width+16; x += 16 {
+		for y := 0; y < c.Height+16; y += 16 {
+			task := NewTask(renderer, c, wor, x, y)
+			runner.AddTask(task)
+		}
+	}
+	runner.Stop()
+	runner.Wait()
 }
