@@ -57,9 +57,9 @@ func (img ImageFilm) Add(x, y int, lxyz []float64, weight float64) {
 func (img ImageFilm) acceptWrites() {
 	for p := range img.writer {
 		x, y := p.x, p.y
-		img.Pixels[x][y].Lxyz[0] = p.lxyz[0]
-		img.Pixels[x][y].Lxyz[1] = p.lxyz[1]
-		img.Pixels[x][y].Lxyz[2] = p.lxyz[2]
+		img.Pixels[x][y].Lxyz[0] += p.weight * p.lxyz[0]
+		img.Pixels[x][y].Lxyz[1] += p.weight * p.lxyz[1]
+		img.Pixels[x][y].Lxyz[2] += p.weight * p.lxyz[2]
 		img.Pixels[x][y].WeightSum += p.weight
 	}
 }

@@ -54,9 +54,10 @@ func (c Canvas) Render(wor world.World) {
 
 	for i, pp := range c.film.Pixels {
 		for j, p := range pp {
-			r := uint8(p.Lxyz[0] * 255)
-			g := uint8(p.Lxyz[1] * 255)
-			b := uint8(p.Lxyz[2] * 255)
+			sum := p.WeightSum
+			r := uint8((p.Lxyz[0] / sum) * 255)
+			g := uint8((p.Lxyz[1] / sum) * 255)
+			b := uint8((p.Lxyz[2] / sum) * 255)
 			c.image.Set(i, j, color.RGBA{r, g, b, 255})
 		}
 	}
