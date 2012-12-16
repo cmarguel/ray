@@ -1,6 +1,7 @@
 package camera
 
 import (
+	"ray/camera/film"
 	"ray/geom"
 	"ray/mmath"
 )
@@ -25,22 +26,17 @@ type Camera interface {
 	GetPos() geom.Vector3
 }
 
-type Film struct {
-	ResolutionX int
-	ResolutionY int
-}
-
 type PinholeCamera struct {
 	Pos    geom.Vector3
 	LookAt geom.Vector3
 	Up     geom.Vector3
 
-	Film Film
+	Film film.ImageFilm
 
 	camToWorld mmath.Transform
 }
 
-func NewPinholeCamera(film Film) PinholeCamera {
+func NewPinholeCamera(film film.ImageFilm) PinholeCamera {
 	pos := geom.NewVector3(0., 0., 0)
 	look := geom.NewVector3(0., 0., 1.)
 	up := geom.NewVector3(0, 1., 0)

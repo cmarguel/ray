@@ -8,6 +8,7 @@ import (
 	//"math"
 
 	"ray/camera"
+	"ray/camera/film"
 	"ray/integrator"
 	"ray/output"
 	"ray/render/sampler"
@@ -25,6 +26,7 @@ type Canvas struct {
 	image  Drawable
 	output output.Output
 	camera camera.Camera
+	film   film.ImageFilm
 }
 
 func NewCanvasPNG(w, h int, filename string) Canvas {
@@ -35,11 +37,11 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 
 	out := output.NewPNGOutput(filename)
 
-	film := camera.Film{w, h}
+	film := film.NewImageFilm(w, h)
 
 	camera := camera.NewPinholeCamera(film)
 
-	return Canvas{w, h, m, out, camera}
+	return Canvas{w, h, m, out, camera, film}
 }
 
 func (c Canvas) Set(x, y int, color color.Color) {
@@ -48,6 +50,15 @@ func (c Canvas) Set(x, y int, color color.Color) {
 
 func (c Canvas) Render(wor world.World) {
 	c.render(wor)
+
+	for i, pp := range c.film.Pixels {
+		for j, p := range pp {
+			r := uint8(p.Lxyz[0] * 255)
+			g := uint8(p.Lxyz[1] * 255)
+			b := uint8(p.Lxyz[2] * 255)
+			c.image.Set(i, j, color.RGBA{r, g, b, 255})
+		}
+	}
 
 	c.output.Output(c.image)
 }
@@ -61,12 +72,9 @@ func (c Canvas) raytrace(x, y int, wor world.World, renderer sampler.Renderer) {
 	radiance := renderer.Li(wor, intersect)
 	rf, gf, bf := radiance.ToRGB()
 	// fmt.Println(uint8(rf*255), uint8(gf*255), uint8(bf*255))
-	col := color.RGBA{uint8(rf * 255), uint8(gf * 255), uint8(bf * 255), 255}
-	c.image.Set(x, y, col)
 
-	// if math.IsInf(nearestPointDistance, 1) {
-	if !found && x >= 0 && y >= 0 && x < c.Width && y < c.Height {
-		c.image.Set(x, y, color.RGBA{0, 0, 0, 255})
+	if found {
+		c.film.Add(x, y, []float64{rf, gf, bf}, 1.)
 	}
 }
 
@@ -96,7 +104,7 @@ func (c Canvas) render(wor world.World) {
 	//onePercent := totalRays / 100
 	for x := 0; x < c.Width+16; x += 16 {
 		for y := 0; y < c.Height+16; y += 16 {
-			task := NewTask(renderer, c, wor, x, y)
+			task := NewTask(renderer, c, c.camera, wor, x, y)
 			runner.AddTask(task)
 		}
 	}

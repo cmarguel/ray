@@ -2,6 +2,7 @@ package render
 
 import (
 	//"fmt"
+	"ray/camera"
 	"ray/render/sampler"
 	"ray/world"
 )
@@ -9,13 +10,15 @@ import (
 type Task struct {
 	Renderer sampler.Renderer
 	Canvas   Canvas
+	Camera   camera.Camera
 	World    world.World
 	MinX     int
 	MinY     int
 }
 
-func NewTask(renderer sampler.Renderer, canvas Canvas, wor world.World, minX, minY int) Task {
-	return Task{renderer, canvas, wor, minX, minY}
+func NewTask(renderer sampler.Renderer, canvas Canvas, cam camera.Camera,
+	wor world.World, minX, minY int) Task {
+	return Task{renderer, canvas, cam, wor, minX, minY}
 }
 
 func (t Task) Run() {
