@@ -1,7 +1,7 @@
 package sampler
 
 import (
-	"ray/accel"
+	"ray/geom"
 	"ray/integrator"
 	"ray/light/spectrum"
 	"ray/world"
@@ -15,6 +15,16 @@ func NewRenderer(surface integrator.SurfaceIntegrator) Renderer {
 	return Renderer{surface}
 }
 
-func (r Renderer) Li(wor world.World, isect accel.Intersection) spectrum.RGBSpectrum {
-	return r.SurfaceIntegrator.Li(wor, isect)
+func (r Renderer) Li(ray geom.Ray, wor world.World) spectrum.RGBSpectrum {
+	isect, found := wor.Aggregate.Intersect(&ray)
+
+	li := spectrum.NewRGBSpectrum(0.)
+	if found {
+		li = r.SurfaceIntegrator.Li(wor, isect)
+	} else { // figure out the color when nothing hit
+		for _, l := range wor.Lights {
+			li = li.Plus(l.Le(ray))
+		}
+	}
+	return li
 }

@@ -67,15 +67,10 @@ func (c Canvas) raytrace(x, y int, wor world.World, renderer sampler.Renderer) {
 	sample := camera.NewCameraSample(x, y)
 	ray := c.camera.GenerateRay(sample)
 
-	// nearestPointDistance := math.Inf(1)
-	intersect, found := wor.Aggregate.Intersect(&ray)
-	radiance := renderer.Li(wor, intersect)
+	radiance := renderer.Li(ray, wor)
 	rf, gf, bf := radiance.ToRGB()
-	// fmt.Println(uint8(rf*255), uint8(gf*255), uint8(bf*255))
 
-	if found {
-		c.film.Add(x, y, []float64{rf, gf, bf}, 1.)
-	}
+	c.film.Add(x, y, []float64{rf, gf, bf}, 1.)
 }
 
 func taskLogger(numTasks int, done <-chan int) {

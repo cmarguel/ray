@@ -10,4 +10,5 @@ type Light interface {
 	NSamples() int
 	IsDeltaLight() bool
 	SampleL(geom.Vector3, float64, float64) (spectrum.RGBSpectrum, geom.Vector3, *visibility.Tester)
+	Le(geom.Ray) spectrum.RGBSpectrum
 }

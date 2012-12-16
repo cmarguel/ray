@@ -32,3 +32,7 @@ func (l PointLight) IsDeltaLight() bool {
 func (l PointLight) NSamples() int {
 	return l.nSamples
 }
+
+func (l PointLight) Le(ray geom.Ray) spectrum.RGBSpectrum {
+	return spectrum.NewRGBSpectrum(0.)
+}
