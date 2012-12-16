@@ -92,7 +92,7 @@ func (c Canvas) render(wor world.World) {
 	runner.Start()
 
 	whitted := integrator.NewWhitted()
-	renderer := sampler.NewRenderer(c.camera, c.film, whitted)
+	renderer := sampler.NewRenderer(whitted)
 
 	numPixels := c.Width * c.Height
 	numTasks := mmath.RoundUpPow2(numPixels / (16 * 16))

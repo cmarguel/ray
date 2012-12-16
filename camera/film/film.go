@@ -1,8 +1,15 @@
 package film
 
+import (
+	"ray/light/spectrum"
+	"ray/render/sampler"
+)
+
 type Film interface {
 	W() int
 	H() int
+
+	AddSample(sampler.Sample, spectrum.RGBSpectrum)
 }
 
 type BaseFilm struct {
@@ -62,4 +69,8 @@ func (img ImageFilm) acceptWrites() {
 		img.Pixels[x][y].Lxyz[2] += p.weight * p.lxyz[2]
 		img.Pixels[x][y].WeightSum += p.weight
 	}
+}
+
+func (img ImageFilm) AddSample(samp sampler.Sample, rgb spectrum.RGBSpectrum) {
+
 }

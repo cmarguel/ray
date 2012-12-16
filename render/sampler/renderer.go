@@ -1,8 +1,6 @@
 package sampler
 
 import (
-	"ray/camera"
-	"ray/camera/film"
 	"ray/geom"
 	"ray/integrator"
 	"ray/light/spectrum"
@@ -11,12 +9,10 @@ import (
 
 type Renderer struct {
 	SurfaceIntegrator integrator.SurfaceIntegrator
-
-	camera camera.Camera
 }
 
-func NewRenderer(cam camera.Camera, fil film.Film, surface integrator.SurfaceIntegrator) Renderer {
-	return Renderer{surface, cam}
+func NewRenderer(surface integrator.SurfaceIntegrator) Renderer {
+	return Renderer{surface}
 }
 
 func (r Renderer) Li(ray geom.Ray, wor world.World) spectrum.RGBSpectrum {
