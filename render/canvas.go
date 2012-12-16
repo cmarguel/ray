@@ -10,6 +10,7 @@ import (
 	"ray/camera"
 	"ray/camera/film"
 	"ray/integrator"
+	"ray/mmath"
 	"ray/output"
 	"ray/render/sampler"
 	"ray/world"
@@ -90,19 +91,26 @@ func (c Canvas) render(wor world.World) {
 	runner.Start()
 
 	whitted := integrator.NewWhitted()
-	renderer := sampler.NewRenderer(whitted)
+	renderer := sampler.NewRenderer(c.camera, c.film, whitted)
 
-	totalRays := c.Width * c.Height
-	numTasks := totalRays/(16*16) + 1
+	numPixels := c.Width * c.Height
+	numTasks := mmath.RoundUpPow2(numPixels / (16 * 16))
 	go taskLogger(numTasks, runner.TasksDone)
 	fmt.Printf("%d tasks to do with %d goroutines\n", numTasks, numRoutines)
 	//onePercent := totalRays / 100
-	for x := 0; x < c.Width+16; x += 16 {
-		for y := 0; y < c.Height+16; y += 16 {
-			task := NewTask(renderer, c, c.camera, wor, x, y)
-			runner.AddTask(task)
-		}
+	//for x := 0; x < c.Width+16; x += 16 {
+	//	for y := 0; y < c.Height+16; y += 16 {
+
+	mainSampler := sampler.NewUniformSampler(0, c.Width, 0, c.Height, 1, 0, 0)
+
+	for i := 0; i < numTasks; i++ {
+		//task := NewTask(renderer, c, c.camera, wor, x, y)
+		subsampler := mainSampler.GetSubSampler(numTasks-1-i, numTasks)
+		task := NewTask(renderer, c, c.camera, wor, subsampler)
+		runner.AddTask(task)
+		//}
 	}
+	fmt.Println("Done queuing tasks")
 	runner.Stop()
 	runner.Wait()
 }

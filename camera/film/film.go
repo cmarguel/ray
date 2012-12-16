@@ -1,11 +1,21 @@
 package film
 
 type Film interface {
+	W() int
+	H() int
 }
 
 type BaseFilm struct {
 	ResolutionX int
 	ResolutionY int
+}
+
+func (b BaseFilm) W() int {
+	return b.ResolutionX
+}
+
+func (b BaseFilm) H() int {
+	return b.ResolutionY
 }
 
 type ImageFilm struct {
