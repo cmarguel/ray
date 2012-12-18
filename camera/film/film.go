@@ -71,6 +71,8 @@ func (img ImageFilm) acceptWrites() {
 	}
 }
 
-func (img ImageFilm) AddSample(samp sampler.Sample, rgb spectrum.RGBSpectrum) {
-
+func (img ImageFilm) AddSample(sample sampler.Sample, rgb spectrum.RGBSpectrum) {
+	x := int(sample.ImageX)
+	y := int(sample.ImageY)
+	img.Add(x, y, rgb.Vals, 1.)
 }

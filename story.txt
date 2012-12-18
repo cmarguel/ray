@@ -109,3 +109,7 @@ and am more or less making it up as I go along.
 16 Dec 2012
 	1.	I'm working on the ImageFilm class. Currently, instead of adding samples, I'm just adding
 		straight up values (although I've already put placeholders for weights).
+
+18 Dec 2012
+	2.	Finally making renderer use samples (albeit still using a uniform strategy). This required
+		some code to be moved around a little.

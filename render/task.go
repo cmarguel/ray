@@ -24,7 +24,15 @@ func NewTask(renderer sampler.Renderer, canvas Canvas, cam camera.Camera,
 func (t Task) Run() {
 	for samples, hasMore := t.sampler.GetMoreSamples(); hasMore; samples, hasMore = t.sampler.GetMoreSamples() {
 		for _, samp := range samples {
-			t.Canvas.raytrace(int(samp.ImageX), int(samp.ImageY), t.World, t.Renderer)
+			t.raytraceSample(samp)
 		}
 	}
+}
+
+func (t Task) raytraceSample(sample sampler.Sample) {
+	ray := t.Camera.GenerateRay(sample)
+
+	radiance := t.Renderer.Li(ray, t.World)
+
+	t.Camera.Film().AddSample(sample, radiance)
 }

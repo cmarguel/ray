@@ -7,3 +7,7 @@ type CameraSample struct {
 type Sample struct {
 	CameraSample
 }
+
+func NewSample(x, y, u, v, t float64) Sample {
+	return Sample{CameraSample{x, y, u, v, t}}
+}

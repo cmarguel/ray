@@ -4,6 +4,7 @@ import (
 	"ray/camera/film"
 	"ray/geom"
 	"ray/mmath"
+	"ray/render/sampler"
 )
 
 type Viewport struct {
@@ -12,18 +13,10 @@ type Viewport struct {
 	Depth  float64
 }
 
-type CameraSample struct {
-	ImageX int
-	ImageY int
-}
-
-func NewCameraSample(x, y int) CameraSample {
-	return CameraSample{x, y}
-}
-
 type Camera interface {
-	GenerateRay(sample CameraSample) geom.Ray
+	GenerateRay(sample sampler.Sample) geom.Ray
 	GetPos() geom.Vector3
+	Film() film.Film
 }
 
 type PinholeCamera struct {
@@ -31,9 +24,13 @@ type PinholeCamera struct {
 	LookAt geom.Vector3
 	Up     geom.Vector3
 
-	Film film.ImageFilm
+	film film.ImageFilm
 
 	camToWorld mmath.Transform
+}
+
+func (c PinholeCamera) Film() film.Film {
+	return c.film
 }
 
 func NewPinholeCamera(film film.ImageFilm) PinholeCamera {
@@ -46,10 +43,10 @@ func NewPinholeCamera(film film.ImageFilm) PinholeCamera {
 	return PinholeCamera{pos, look, up, film, tr}
 }
 
-func (c PinholeCamera) GenerateRay(sample CameraSample) geom.Ray {
-	film := c.Film
-	x := float64(sample.ImageX - film.ResolutionX/2)
-	y := float64(sample.ImageY - film.ResolutionY/2)
+func (c PinholeCamera) GenerateRay(sample sampler.Sample) geom.Ray {
+	film := c.film
+	x := sample.ImageX - float64(film.ResolutionX/2)
+	y := sample.ImageY - float64(film.ResolutionY/2)
 	// Scale both components by just one component of the resolution. I suspect 
 	// it would look stretched out if we scaled x by x and y by y.
 	dir := geom.NewVector3(x/float64(film.ResolutionY), y/float64(film.ResolutionY), 0.1)

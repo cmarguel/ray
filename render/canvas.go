@@ -65,16 +65,6 @@ func (c Canvas) Render(wor world.World) {
 	c.output.Output(c.image)
 }
 
-func (c Canvas) raytrace(x, y int, wor world.World, renderer sampler.Renderer) {
-	sample := camera.NewCameraSample(x, y)
-	ray := c.camera.GenerateRay(sample)
-
-	radiance := renderer.Li(ray, wor)
-	rf, gf, bf := radiance.ToRGB()
-
-	c.film.Add(x, y, []float64{rf, gf, bf}, 1.)
-}
-
 func taskLogger(numTasks int, done <-chan int) {
 	i := 0
 	tenPercent := numTasks / 10
