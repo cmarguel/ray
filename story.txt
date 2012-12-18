@@ -111,5 +111,9 @@ and am more or less making it up as I go along.
 		straight up values (although I've already put placeholders for weights).
 
 18 Dec 2012
-	2.	Finally making renderer use samples (albeit still using a uniform strategy). This required
+	1.	Finally making renderer use samples (albeit still using a uniform strategy). This required
 		some code to be moved around a little.
+	2.	And now I added a Gaussian filter, which should hopefully help antialias once I start 
+		taking multiple samples. In PBRT, the film precomputes a weight table for its filters,
+		and just approximates the real value. For now, I'll try using the exact value, and if
+		it works out, I'll precompute the table and see how much faster it gets.
