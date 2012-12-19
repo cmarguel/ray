@@ -38,7 +38,8 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 
 	out := output.NewPNGOutput(filename)
 
-	film := film.NewImageFilm(w, h)
+	filter := sampler.NewGaussianFilter(1, 1, 0.75)
+	film := film.NewImageFilm(w, h, filter)
 
 	camera := camera.NewPinholeCamera(film)
 
