@@ -47,7 +47,7 @@ func NewImageFilm(w, h int, filt sampler.Filter) ImageFilm {
 		}
 	}
 
-	table := precomputeFilter(size, filt)
+	table := precomputeFilter(filt)
 
 	img := ImageFilm{BaseFilm{w, h}, p, filt, make(chan PixPart, w*h), table}
 	go img.acceptWrites()
@@ -55,13 +55,13 @@ func NewImageFilm(w, h int, filt sampler.Filter) ImageFilm {
 	return img
 }
 
-func precomputeFilter(size int, filt sampler.Filter) []float64 {
+func precomputeFilter(filt sampler.Filter) []float64 {
 	table := make([]float64, size*size)
 	i := 0
 	for y := 0; i < size; y++ {
-		fy := (float64(y) + 0.5) * (filt.YWidth() / float64(size))
+		fy := (float64(y) + 0.5) * (filt.YWidth() / size)
 		for x := 0; x < size; x++ {
-			fx := (float64(x) + 0.5) * (filt.XWidth() / float64(size))
+			fx := (float64(x) + 0.5) * (filt.XWidth() / size)
 			table[i] = filt.Evaluate(fx, fy)
 			i++
 		}
