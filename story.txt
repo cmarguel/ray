@@ -117,3 +117,8 @@ and am more or less making it up as I go along.
 		taking multiple samples. In PBRT, the film precomputes a weight table for its filters,
 		and just approximates the real value. For now, I'll try using the exact value, and if
 		it works out, I'll precompute the table and see how much faster it gets.
+
+24 Dec 2012
+	1.	Implemented stratified sampling. Image looks quite good now; however, tracing is much much
+		slower. I'll probably need to do the precomputed filter values now to make it fast again.
+		I haven't implemented Latin Hypercube sampling, which may be important down the line.

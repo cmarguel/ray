@@ -90,7 +90,7 @@ func (c Canvas) render(wor world.World) {
 	go taskLogger(numTasks, runner.TasksDone)
 	fmt.Printf("%d tasks to do with %d goroutines\n", numTasks, numRoutines)
 
-	mainSampler := sampler.NewUniformSampler(0, c.Width, 0, c.Height, 1, 0, 0)
+	mainSampler := sampler.NewStratified(0, c.Width, 0, c.Height, 4, 4, true, 0, 0)
 
 	for i := 0; i < numTasks; i++ {
 		subsampler := mainSampler.GetSubSampler(numTasks-1-i, numTasks)
