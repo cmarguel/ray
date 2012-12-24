@@ -58,7 +58,7 @@ func NewImageFilm(w, h int, filt sampler.Filter) ImageFilm {
 func precomputeFilter(filt sampler.Filter) []float64 {
 	table := make([]float64, size*size)
 	i := 0
-	for y := 0; i < size; y++ {
+	for y := 0; y < size; y++ {
 		fy := (float64(y) + 0.5) * (filt.YWidth() / size)
 		for x := 0; x < size; x++ {
 			fx := (float64(x) + 0.5) * (filt.XWidth() / size)
@@ -119,14 +119,13 @@ func (img ImageFilm) AddSample(sample sampler.Sample, rgb spectrum.RGBSpectrum) 
 	y0 := int(math.Ceil(dy - img.filter.YWidth()))
 	y1 := int(math.Ceil(dy + img.filter.YWidth()))
 
-	//ifx, ify := img.computeTableOffsets(dx, dy, x0, x1, y0, y1)
+	ifx, ify := img.computeTableOffsets(dx, dy, x0, x1, y0, y1)
 	//sync := img.filter.XWidth() > 0.5 || img.filter.YWidth() > 0.5
 
 	for y := y0; y <= y1; y++ {
 		for x := x0; x <= x1; x++ {
-			//offset := ify[y-y0]*size + ifx[x-x0]
-			//weight := img.filterTable[offset]
-			weight := img.filter.Evaluate(float64(x)-sample.ImageX, float64(y)-sample.ImageY)
+			offset := ify[y-y0]*size + ifx[x-x0]
+			weight := img.filterTable[offset]
 			//if sync {
 			img.AddConcurrent(x, y, rgb.Vals, weight)
 			//} else {

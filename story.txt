@@ -125,3 +125,6 @@ and am more or less making it up as I go along.
 	2.	I also added a precomputed table, but I took it out for now as it is either incorrect, or
 		not currently useful--the image looks significantly worse with a precomputed table of filter
 		values. This shouldn't be the case, but I haven't found where it could have gone wrong.
+		-- Found the error, and it was entirely my fault. I had an i where I should have put a y.
+		Unfortunately, the speed gain doesn't seem to be much, so I'll need to look into other 
+		optimizations.
