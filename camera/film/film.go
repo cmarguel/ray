@@ -120,17 +120,17 @@ func (img ImageFilm) AddSample(sample sampler.Sample, rgb spectrum.RGBSpectrum) 
 	y1 := int(math.Ceil(dy + img.filter.YWidth()))
 
 	ifx, ify := img.computeTableOffsets(dx, dy, x0, x1, y0, y1)
-	//sync := img.filter.XWidth() > 0.5 || img.filter.YWidth() > 0.5
+	sync := img.filter.XWidth() > 0.5 || img.filter.YWidth() > 0.5
 
 	for y := y0; y <= y1; y++ {
 		for x := x0; x <= x1; x++ {
 			offset := ify[y-y0]*size + ifx[x-x0]
 			weight := img.filterTable[offset]
-			//if sync {
-			img.AddConcurrent(x, y, rgb.Vals, weight)
-			//} else {
-			//	img.addPixel(x, y, rgb.Vals[0], rgb.Vals[1], rgb.Vals[2], weight)
-			//}
+			if sync {
+				img.AddConcurrent(x, y, rgb.Vals, weight)
+			} else {
+				img.addPixel(x, y, rgb.Vals[0], rgb.Vals[1], rgb.Vals[2], weight)
+			}
 		}
 	}
 
