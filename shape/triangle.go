@@ -105,3 +105,7 @@ func (tr Triangle) IntersectP(ray geom.Ray) bool {
 
 	return true
 }
+
+func (t Triangle) CanIntersect() bool {
+	return true
+}

@@ -146,3 +146,7 @@ func (c Cube) IntersectP(ray geom.Ray) bool {
 	}
 	return false
 }
+
+func (c Cube) CanIntersect() bool {
+	return true
+}
