@@ -6,11 +6,12 @@ import (
 )
 
 type Mesh struct {
-	P []geom.Vector3
+	Ind []int
+	P   []geom.Vector3
 }
 
-func NewMesh(p []geom.Vector3) Mesh {
-	return Mesh{p}
+func NewMesh(ind []int, p []geom.Vector3) Mesh {
+	return Mesh{ind, p}
 }
 
 func CanIntersect() bool {
@@ -36,10 +37,10 @@ func (m Mesh) WorldBound() geom.BBox {
 }
 
 func (m Mesh) Refine(list *list.List) {
-	for i := range m.P {
-		p1 := m.P[i]
-		p2 := m.P[i+1]
-		p3 := m.P[i+2]
+	for i := range m.Ind {
+		p1 := m.P[m.Ind[i]]
+		p2 := m.P[m.Ind[i+1]]
+		p3 := m.P[m.Ind[i+2]]
 		list.PushBack(NewTriangle(p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z, p3.X, p3.Y, p3.Z))
 	}
 }
