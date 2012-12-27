@@ -63,3 +63,16 @@ func Test_named_array(t *testing.T) {
 	fmt.Println(p.Directive.Args)
 
 }
+
+func Test_singleton_strings(t *testing.T) {
+	p := NewParser("foobar \"alpha\" \"beta\"")
+	if !p.Parse() {
+		t.Fail()
+	}
+	if p.Directive.Name != "foobar" || len(p.Directive.Args) != 2 {
+		t.Fail()
+	}
+	if p.Directive.Args[0] != "\"alpha\"" || p.Directive.Args[1] != "\"beta\"" {
+		t.Fail()
+	}
+}

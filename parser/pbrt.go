@@ -6,7 +6,7 @@ import (
 
 /* line = comment | spec
  * spec = ident {arg}
- * arg = ident | "{ident}" array
+ * arg = ident | "{ident}" [array]
  * array = [{ident}]
  */
 
@@ -63,7 +63,9 @@ func (p *Parser) arg() {
 		p.expect("quote")
 		p.add("\"" + strings.TrimSpace(id) + "\"")
 
-		p.array()
+		if p.sym.tok == "lbr" {
+			p.array()
+		}
 	} else {
 		panic("parse error")
 	}
