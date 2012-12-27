@@ -1,108 +1,50 @@
 package parser
 
 import (
+	"bufio"
+	"fmt"
+	"os"
 	"strings"
 )
 
-/* line = comment | spec
- * spec = ident {arg}
- * arg = ident | "{ident}" [array]
- * array = [{ident}]
- */
-
-type Directive struct {
-	Name string
-	Args []string
-}
-
-type Parser struct {
-	str       string
-	sym       Symbol
-	lex       *Lexer
-	Directive Directive
-}
-
-func NewParser(s string) *Parser {
-	l := NewLexer(s)
-
-	return &Parser{s, l.next(), l, Directive{}}
-}
-
-func (p *Parser) Parse() bool {
-	if p.sym.str[0] == '#' {
-		return false
+func GetDirectives(path string) []Directive {
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Printf("Could not find %s\n", path)
+		return []Directive{}
 	}
-	p.spec()
-	return true
-}
+	defer file.Close()
 
-func (p *Parser) spec() {
-	p.Directive.Name = p.sym.str
-	p.accept("ident")
-	for p.lex.hasMore() && (p.sym.tok == "ident" || p.sym.tok == "quote") {
-		p.arg()
-	}
-}
+	reader := bufio.NewReader(file)
 
-func (p *Parser) add(s string) {
-	p.Directive.Args = append(p.Directive.Args, s)
-}
+	directives := make([]Directive, 0)
+	for {
+		part, prefix, err := reader.ReadLine()
+		if err != nil {
+			break
+		}
+		for prefix {
+			var p []byte
+			p, prefix, _ = reader.ReadLine()
+			part = concat(part, p)
+		}
+		// fmt.Println("|", string(part), "|")
+		line := strings.TrimSpace(string(part))
+		if len(line) > 0 {
+			parser := NewParser(line)
 
-func (p *Parser) arg() {
-	if p.sym.tok == "ident" {
-		p.add(p.sym.str)
-		p.accept("ident")
-	} else if p.accept("quote") {
-		id := ""
-		id += p.sym.str + " "
-		for p.accept("ident") {
-			if p.sym.tok == "ident" {
-				id += p.sym.str + " "
+			if parser.Parse() {
+				directives = append(directives, parser.Directive)
 			}
 		}
-		p.expect("quote")
-		p.add("\"" + strings.TrimSpace(id) + "\"")
-
-		if p.sym.tok == "lbr" {
-			p.array()
-		}
-	} else {
-		panic("parse error")
 	}
+
+	return directives
 }
 
-func (p *Parser) array() {
-	p.accept("lbr")
-	id := ""
-	id += p.sym.str + " "
-	for p.accept("ident") {
-		if p.sym.tok == "ident" {
-			id += p.sym.str + " "
-		}
-	}
-	id = strings.TrimSpace(id)
-	p.expect("rbr")
-	p.add(id)
-}
-
-func (p *Parser) next() {
-	if p.lex.hasMore() {
-		p.sym = p.lex.next()
-	}
-}
-
-func (p *Parser) accept(s string) bool {
-	if p.sym.tok == s {
-		p.next()
-		return true
-	}
-	return false
-}
-
-func (p *Parser) expect(s string) bool {
-	if p.accept(s) {
-		return true
-	}
-	panic("Parse error!")
-	return false
+func concat(old1, old2 []byte) []byte {
+	newslice := make([]byte, len(old1)+len(old2))
+	copy(newslice, old1)
+	copy(newslice[len(old1):], old2)
+	return newslice
 }

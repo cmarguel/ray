@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -73,6 +74,16 @@ func Test_singleton_strings(t *testing.T) {
 		t.Fail()
 	}
 	if p.Directive.Args[0] != "\"alpha\"" || p.Directive.Args[1] != "\"beta\"" {
+		t.Fail()
+	}
+}
+
+func Dont_Test_getDirectives(t *testing.T) {
+	dir, _ := os.Getwd()
+	fmt.Printf("working from %s\n", dir)
+	d := GetDirectives("../scenes/cornell-mlt.pbrt")
+	fmt.Printf("Loaded %d directives\n", len(d))
+	if len(d) != 39 {
 		t.Fail()
 	}
 }
