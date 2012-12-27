@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"os"
+	"ray/geom"
 	"testing"
 )
 
@@ -84,6 +85,18 @@ func Dont_Test_getDirectives(t *testing.T) {
 	d := GetDirectives("../scenes/cornell-mlt.pbrt")
 	fmt.Printf("Loaded %d directives\n", len(d))
 	if len(d) != 39 {
+		t.Fail()
+	}
+}
+
+func Test_config(t *testing.T) {
+	conf := LoadConfig("../scenes/cornell-mlt.pbrt")
+	if conf.Translate.Distance(geom.NewVector3(-278., -273, 500)) > 0.005 {
+		fmt.Printf("Translate was way off. Actual values: %s", conf.Translate)
+		t.Fail()
+	}
+	if conf.Fov != 55. {
+		fmt.Printf("FOV was %f\n", conf.Fov)
 		t.Fail()
 	}
 }

@@ -14,7 +14,7 @@ func NewMesh(ind []int, p []geom.Vector3) Mesh {
 	return Mesh{ind, p}
 }
 
-func CanIntersect() bool {
+func (m Mesh) CanIntersect() bool {
 	return false
 }
 
@@ -37,7 +37,7 @@ func (m Mesh) WorldBound() geom.BBox {
 }
 
 func (m Mesh) Refine(list *list.List) {
-	for i := range m.Ind {
+	for i := 0; i < len(m.Ind)-3; i++ {
 		p1 := m.P[m.Ind[i]]
 		p2 := m.P[m.Ind[i+1]]
 		p3 := m.P[m.Ind[i+2]]
