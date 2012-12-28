@@ -15,7 +15,7 @@ type Viewport struct {
 
 type Camera interface {
 	GenerateRay(sample sampler.Sample) geom.Ray
-	GetPos() geom.Vector3
+	//GetPos() geom.Vector3
 	Film() film.Film
 }
 

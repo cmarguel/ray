@@ -111,6 +111,12 @@ func (t Transform) Apply(v geom.Vector3) geom.Vector3 {
 	)
 }
 
+func (t Transform) ApplyToRay(r geom.Ray) geom.Ray {
+	r.Origin = t.Apply(r.Origin)
+	r.Direction = t.Apply(r.Direction)
+	return r
+}
+
 func (t Transform) Times(t2 Transform) Transform {
 	m := t.m.Times(t2.m)
 	return Transform{m, m.Inverse()}
