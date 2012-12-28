@@ -1,5 +1,14 @@
 package mmath
 
+import (
+	"math"
+)
+
+const (
+	RadToDeg = 180 / math.Pi
+	DegToRad = math.Pi / 180
+)
+
 func Clamp(v, min, max float64) float64 {
 	if v < min {
 		return min

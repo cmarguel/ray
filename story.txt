@@ -133,3 +133,6 @@ and am more or less making it up as I go along.
 	1.	Created parser for PBRT format. That was a lot of work, but it's pretty boring and I don't 
 		feel that it's productive to document the parser too thoroughly. My main problem seems to be
 		displaying things--all I get are tiny illuminated polygons. 
+	2.	Something seems to be wrong when I try rendering triangle meshes. I've been looking at it 
+		for a while, so I decided it would be best to stop for now and work on a better camera, which
+		should help me figure out the mesh problem better once I get a sane perspective, so to speak.

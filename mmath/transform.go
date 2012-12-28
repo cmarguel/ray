@@ -7,18 +7,19 @@ import (
 )
 
 type Transform struct {
-	m Matrix4x4
+	m   Matrix4x4
+	inv Matrix4x4
 }
 
 func NewTransform() Transform {
-	return Transform{
-		NewMatrix4x4(
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1,
-		),
-	}
+	m := NewMatrix4x4(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	)
+	inv := m.Inverse()
+	return Transform{m, inv}
 }
 
 func (t Transform) Translate(dx, dy, dz float64) Transform {
@@ -28,7 +29,8 @@ func (t Transform) Translate(dx, dy, dz float64) Transform {
 		0, 0, 1, dz,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func (t Transform) Scale(x, y, z float64) Transform {
@@ -38,7 +40,8 @@ func (t Transform) Scale(x, y, z float64) Transform {
 		0, 0, z, 0,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func (t Transform) RotateX(angle float64) Transform {
@@ -50,7 +53,8 @@ func (t Transform) RotateX(angle float64) Transform {
 		0, s, c, 0,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func (t Transform) RotateY(angle float64) Transform {
@@ -62,7 +66,8 @@ func (t Transform) RotateY(angle float64) Transform {
 		-s, 0, c, 0,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func (t Transform) RotateZ(angle float64) Transform {
@@ -74,7 +79,8 @@ func (t Transform) RotateZ(angle float64) Transform {
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
@@ -88,7 +94,8 @@ func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
 		left.Z, newUp.Z, dir.Z, pos.Z,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m)}
+	m := tr.Times(t.m)
+	return Transform{m, m.Inverse()}
 }
 
 func dot(v1, v2 []float64) float64 {
@@ -102,4 +109,25 @@ func (t Transform) Apply(v geom.Vector3) geom.Vector3 {
 		dot(t.m.Row(1), v2),
 		dot(t.m.Row(2), v2),
 	)
+}
+
+func (t Transform) Times(t2 Transform) Transform {
+	m := t.m.Times(t2.m)
+	return Transform{m, m.Inverse()}
+}
+
+func (t Transform) Perspective(fov, n, f float64) Transform {
+	persp := NewMatrix4x4(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, f/(f-n), -f*n/(f-n),
+		0, 0, 1, 0)
+
+	invTan := 1. / math.Tan(DegToRad*fov/2.)
+	m := t.Scale(invTan, invTan, 1).m.Times(persp)
+	return Transform{m, m.Inverse()}
+}
+
+func (t Transform) Inverse() Transform {
+	return Transform{t.inv, t.m}
 }
