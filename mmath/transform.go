@@ -12,14 +12,15 @@ type Transform struct {
 }
 
 func NewTransform() Transform {
-	m := NewMatrix4x4(
+	tr := NewMatrix4x4(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	)
-	inv := m.Inverse()
-	return Transform{m, inv}
+	inv := tr
+
+	return Transform{tr, inv}
 }
 
 func (t Transform) Translate(dx, dy, dz float64) Transform {
@@ -29,8 +30,13 @@ func (t Transform) Translate(dx, dy, dz float64) Transform {
 		0, 0, 1, dz,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	inv := NewMatrix4x4(
+		1, 0, 0, -dx,
+		0, 1, 0, -dy,
+		0, 0, 1, -dz,
+		0, 0, 0, 1,
+	)
+	return Transform{tr.Times(t.m), t.m.Times(inv)}
 }
 
 func (t Transform) Scale(x, y, z float64) Transform {
@@ -40,8 +46,13 @@ func (t Transform) Scale(x, y, z float64) Transform {
 		0, 0, z, 0,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	inv := NewMatrix4x4(
+		1./x, 0, 0, 0,
+		0, 1./y, 0, 0,
+		0, 0, 1./z, 0,
+		0, 0, 0, 1,
+	)
+	return Transform{tr.Times(t.m), t.m.Times(inv)}
 }
 
 func (t Transform) RotateX(angle float64) Transform {
@@ -53,8 +64,8 @@ func (t Transform) RotateX(angle float64) Transform {
 		0, s, c, 0,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	inv := tr.Transpose()
+	return Transform{tr.Times(t.m), t.m.Times(inv)}
 }
 
 func (t Transform) RotateY(angle float64) Transform {
@@ -66,8 +77,8 @@ func (t Transform) RotateY(angle float64) Transform {
 		-s, 0, c, 0,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	inv := tr.Transpose()
+	return Transform{tr.Times(t.m), t.m.Times(inv)}
 }
 
 func (t Transform) RotateZ(angle float64) Transform {
@@ -79,8 +90,8 @@ func (t Transform) RotateZ(angle float64) Transform {
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	inv := tr.Transpose()
+	return Transform{tr.Times(t.m), t.m.Times(inv)}
 }
 
 func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
@@ -119,7 +130,8 @@ func (t Transform) ApplyToRay(r geom.Ray) geom.Ray {
 
 func (t Transform) Times(t2 Transform) Transform {
 	m := t.m.Times(t2.m)
-	return Transform{m, m.Inverse()}
+	inv := t2.m.Times(t.m)
+	return Transform{m, inv}
 }
 
 func (t Transform) Perspective(fov, n, f float64) Transform {

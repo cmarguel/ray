@@ -9,6 +9,7 @@ import (
 
 	"ray/camera"
 	"ray/camera/film"
+	"ray/geom"
 	"ray/integrator"
 	"ray/mmath"
 	"ray/output"
@@ -41,9 +42,20 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 	filter := sampler.NewGaussianFilter(0.5, 0.5, 0.75)
 	film := film.NewImageFilm(w, h, filter)
 
-	camera := camera.NewPinholeCamera(film)
+	//camera := camera.NewPinholeCamera(film)
+	frame := float64(film.ResolutionX) / float64(film.ResolutionY)
+	screen := []float64{0, 0, 0, 0}
+	if frame > 1. {
+		screen = []float64{-frame, frame, -1., -1.}
+	} else {
+		screen = []float64{-1., -1., -1. / frame, 1. / frame}
+	}
 
-	return Canvas{w, h, m, out, camera, film}
+	c2w := mmath.NewTransform().LookAt(geom.NewVector3(0, 0, -50), geom.NewVector3(0, 0, 1), geom.NewVector3(0, 1, 0))
+
+	cam := camera.NewPerspective(c2w, screen, 355., film)
+
+	return Canvas{w, h, m, out, cam, film}
 }
 
 func (c Canvas) Set(x, y int, color color.Color) {

@@ -23,6 +23,19 @@ func NewMatrix4x4(
 	}
 }
 
+func (mat Matrix4x4) Transpose() Matrix4x4 {
+	f := make([][]float64, 4)
+	for i := range mat.M {
+		f[i] = make([]float64, 4)
+	}
+	for i, row := range mat.M {
+		for j, v := range row {
+			f[j][i] = v
+		}
+	}
+	return Matrix4x4{f}
+}
+
 func (mat Matrix4x4) Row(i int) []float64 {
 	m := mat.M
 	return []float64{m[i][0], m[i][1], m[i][2], m[i][3]}

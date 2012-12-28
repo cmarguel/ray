@@ -2,9 +2,7 @@ package camera
 
 import (
 	"ray/camera/film"
-	"ray/geom"
 	"ray/mmath"
-	"ray/render/sampler"
 )
 
 type Projective struct {
