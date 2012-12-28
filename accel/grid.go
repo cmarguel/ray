@@ -2,7 +2,7 @@ package accel
 
 import (
 	"container/list"
-	"fmt"
+	//"fmt"
 	"math"
 	"ray/geom"
 	"ray/mmath"
@@ -43,8 +43,8 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 	for e := p.Front(); e != nil; e = e.Next() {
 		g.bounds = g.bounds.Union(e.Value.(Primitive).WorldBound())
 	}
-	fmt.Println("Max bounds: ", g.bounds.Max)
-	fmt.Println("Min bounds: ", g.bounds.Min)
+	//fmt.Println("Max bounds: ", g.bounds.Max)
+	//fmt.Println("Min bounds: ", g.bounds.Min)
 	delta := g.bounds.Max.Minus(g.bounds.Min)
 	// find voxelsPerUnitDist
 	maxAxis := g.bounds.MaximumExtent()
@@ -70,7 +70,7 @@ func (g *Grid) Initialize(p *list.List, refineImmediately bool) {
 		}
 	}
 	nv := g.nVoxels[0] * g.nVoxels[1] * g.nVoxels[2]
-	fmt.Println("voxel grid has dimensions: ", g.nVoxels[0], g.nVoxels[1], g.nVoxels[2])
+	//fmt.Println("voxel grid has dimensions: ", g.nVoxels[0], g.nVoxels[1], g.nVoxels[2])
 	// In PBRT, this allocation was done via an aligned allocate, in order to be cache friendly.
 	// I don't think we can do anything about that in go.
 	g.voxels = make([]*Voxel, nv)
@@ -127,7 +127,7 @@ func (g Grid) WorldBound() geom.BBox {
 }
 
 func (g Grid) CanIntersect() bool {
-	return false
+	return true
 }
 
 func (g Grid) Intersect(ray *geom.Ray) (Intersection, bool) {

@@ -12,6 +12,7 @@ import (
 	"ray/geom"
 	"ray/light"
 	"ray/mmath"
+	"ray/parser"
 	"ray/render"
 	"ray/shape"
 	"ray/world"
@@ -84,6 +85,8 @@ func makeGrid(r, c int) []shape.Cube {
 func main() {
 	fmt.Println("Making basic image")
 
+	conf := parser.LoadConfig("scenes/cornell-mlt.pbrt")
+
 	c := render.NewCanvasPNG(800, 600, "test.png")
 	wor := world.NewWorld()
 
@@ -109,13 +112,22 @@ func main() {
 	}*/
 
 	cubes := makeGrid(numCubes, numCubes)
-	cubeList := list.New()
+	shapeList := list.New()
 	for _, c := range cubes {
-		// wor.AddShape(c)
-		cubeList.PushBack(accel.NewGeometricPrimitive(c))
+		_ = c
+		//wor.AddShape(c)
+		shapeList.PushBack(accel.NewGeometricPrimitive(c))
 	}
+
+	for _, att := range conf.Attributes {
+		for _, shape := range att.Shapes {
+			_ = shape
+			//shapeList.PushBack(accel.NewGeometricPrimitive(shape))
+		}
+	}
+
 	fmt.Println("Building grid...")
-	grid := accel.NewGrid(cubeList, false)
+	grid := accel.NewGrid(shapeList, false)
 	wor.SetPrimitive(grid)
 	fmt.Println("Done building grid!")
 
@@ -128,6 +140,7 @@ func main() {
 	//wor.AddShape(cube3)
 
 	wor.AddLight(light.NewPointLight(1., -2.5, 4., 10., 10., 10.))
+	wor.AddLight(light.NewPointLight(278., 278, 279.5, 100., 100., 100.))
 
 	c.Render(wor)
 

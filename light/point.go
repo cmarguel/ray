@@ -34,5 +34,5 @@ func (l PointLight) NSamples() int {
 }
 
 func (l PointLight) Le(ray geom.Ray) spectrum.RGBSpectrum {
-	return spectrum.NewRGBSpectrum(0.)
+	return spectrum.NewRGBSpectrum(0.0)
 }

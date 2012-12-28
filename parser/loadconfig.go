@@ -48,9 +48,9 @@ func handleAttribute(dir Directive, att *config.Attribute) {
 func makeVectors(f []float64) []geom.Vector3 {
 	v := make([]geom.Vector3, len(f)/3)
 	for i := 0; i < len(f); i += 3 {
-		v[i/3].X = f[3*i]
-		v[i/3].Y = f[3*i+1]
-		v[i/3].Z = f[3*i+2]
+		v[i/3].X = f[i]
+		v[i/3].Y = f[i+1]
+		v[i/3].Z = f[i+2]
 	}
 	return v
 }
@@ -67,6 +67,7 @@ func handleGlobal(dir Directive, conf *config.Config) {
 }
 
 func contains(str []string, s string) bool {
+	s = "\"" + s + "\""
 	for _, v := range str {
 		if s == v {
 			return true

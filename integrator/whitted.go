@@ -16,7 +16,7 @@ func NewWhitted() WhittedIntegrator {
 }
 
 func (w WhittedIntegrator) Li(wor world.World, isect accel.Intersection) spectrum.RGBSpectrum {
-	spec := spectrum.NewRGBSpectrum(0.0)
+	spec := spectrum.NewRGBSpectrum(0.1)
 
 	for _, light := range wor.Lights {
 		spectrum, _, tester := light.SampleL(isect.DiffGeom.P, isect.RayEpsilon, 0)

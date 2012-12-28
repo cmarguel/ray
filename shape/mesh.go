@@ -3,6 +3,7 @@ package shape
 import (
 	"container/list"
 	"ray/geom"
+	"ray/mmath"
 )
 
 type Mesh struct {
@@ -37,10 +38,19 @@ func (m Mesh) WorldBound() geom.BBox {
 }
 
 func (m Mesh) Refine(list *list.List) {
-	for i := 0; i < len(m.Ind)-3; i++ {
-		p1 := m.P[m.Ind[i]]
-		p2 := m.P[m.Ind[i+1]]
-		p3 := m.P[m.Ind[i+2]]
+	for i := 0; i < len(m.Ind)/3; i++ {
+		p1 := m.P[m.Ind[3*i]]
+		p2 := m.P[m.Ind[3*i+1]]
+		p3 := m.P[m.Ind[3*i+2]]
 		list.PushBack(NewTriangle(p1.X, p1.Y, p1.Z, p2.X, p2.Y, p2.Z, p3.X, p3.Y, p3.Z))
 	}
+}
+
+func (m Mesh) Transform(transform mmath.Transform) Mesh {
+	newVerts := make([]geom.Vector3, len(m.P))
+	for i, t := range m.P {
+		newVerts[i] = transform.Apply(t)
+	}
+	m.P = newVerts
+	return m
 }

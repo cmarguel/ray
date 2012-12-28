@@ -18,7 +18,7 @@ func NewGeometricPrimitive(shape shape.Shape) GeometricPrimitive {
 }
 
 func (p GeometricPrimitive) CanIntersect() bool {
-	return true
+	return p.Shape.CanIntersect()
 }
 
 func (p GeometricPrimitive) Intersect(ray *geom.Ray) (Intersection, bool) {

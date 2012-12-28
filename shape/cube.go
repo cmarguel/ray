@@ -11,6 +11,36 @@ type Cube struct {
 	triangles []Triangle
 }
 
+func xNewCube() Mesh {
+	verts := []geom.Vector3{
+		{-1, -1, -1},
+		{1, -1, -1},
+		{1, -1, 1},
+		{-1, -1, 1},
+		{-1, 1, -1},
+		{1, 1, -1},
+		{1, 1, 1},
+		{-1, 1, 1},
+	}
+
+	inds := []int{
+		0, 1, 4,
+		4, 1, 5,
+		1, 2, 5,
+		5, 2, 6,
+		2, 3, 6,
+		3, 7, 6,
+		4, 5, 7,
+		7, 5, 6,
+		3, 0, 7,
+		7, 0, 4,
+		0, 2, 1,
+		0, 3, 2,
+	}
+
+	return Mesh{inds, verts}
+}
+
 func NewCube() Cube {
 	side11 := NewTriangle(
 		-1, 1, -1,
@@ -148,5 +178,5 @@ func (c Cube) IntersectP(ray geom.Ray) bool {
 }
 
 func (c Cube) CanIntersect() bool {
-	return true
+	return false
 }
