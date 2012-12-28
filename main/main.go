@@ -73,6 +73,7 @@ func makeGrid(r, c int) []shape.Cube {
 			height := math.Abs(z-highestZ) + math.Abs(x-highestX)
 
 			baseTransform := mmath.NewTransform().
+				//RotateY(4*math.Pi/36).
 				Scale(0.25, height*0.25, 0.25).
 				Translate(x, 8.5-height/2., z)
 			cube := shape.NewCube()
