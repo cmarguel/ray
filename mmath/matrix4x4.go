@@ -1,5 +1,9 @@
 package mmath
 
+import (
+	"math"
+)
+
 type Matrix4x4 struct {
 	M [][]float64
 }
@@ -64,4 +68,81 @@ func (m1 Matrix4x4) Times(m2 Matrix4x4) Matrix4x4 {
 			[]float64{t30, t31, t32, t33},
 		},
 	}
+}
+
+// Copied wholesale from pbrt. Practically a cut-paste job.
+// Sorry; I'm not interested in trying to implement Gauss-Jordan on my own.
+func (m Matrix4x4) Inverse() Matrix4x4 {
+	indxc := []int{0, 0, 0, 0}
+	indxr := []int{0, 0, 0, 0}
+	ipiv := []int{0, 0, 0, 0}
+	minv := make([][]float64, 4)
+	for i, r := range m.M {
+		minv[i] = make([]float64, 4)
+		for j, v := range r {
+			minv[i][j] = v
+		}
+	}
+
+	for i := 0; i < 4; i++ {
+		irow := -1
+		icol := -1
+		big := 0.
+		// Choose pivot
+		for j := 0; j < 4; j++ {
+			if ipiv[j] != 1 {
+				for k := 0; k < 4; k++ {
+					if ipiv[k] == 0 {
+						if math.Abs(minv[j][k]) >= big {
+							big = (math.Abs(minv[j][k]))
+							irow = j
+							icol = k
+						}
+					} else if ipiv[k] > 1 {
+						panic("Singular matrix in MatrixInvert")
+					}
+				}
+			}
+		}
+
+		ipiv[icol]++
+		// Swap rows _irow_ and _icol_ for pivot
+		if irow != icol {
+			for k := 0; k < 4; k++ {
+				minv[irow][k], minv[icol][k] = minv[icol][k], minv[irow][k]
+			}
+		}
+		indxr[i] = irow
+		indxc[i] = icol
+		if minv[icol][icol] == 0. {
+			panic("Singular matrix in MatrixInvert")
+		}
+
+		// Set $m[icol][icol]$ to one by scaling row _icol_ appropriately
+		pivinv := 1. / minv[icol][icol]
+		minv[icol][icol] = 1.
+		for j := 0; j < 4; j++ {
+			minv[icol][j] *= pivinv
+		}
+
+		// Subtract this row from others to zero out their columns
+		for j := 0; j < 4; j++ {
+			if j != icol {
+				save := minv[j][icol]
+				minv[j][icol] = 0
+				for k := 0; k < 4; k++ {
+					minv[j][k] -= minv[icol][k] * save
+				}
+			}
+		}
+	}
+	// Swap columns to reflect permutation
+	for j := 3; j >= 0; j-- {
+		if indxr[j] != indxc[j] {
+			for k := 0; k < 4; k++ {
+				minv[k][indxr[j]], minv[k][indxc[j]] = minv[k][indxc[j]], minv[k][indxr[j]]
+			}
+		}
+	}
+	return Matrix4x4{minv}
 }
