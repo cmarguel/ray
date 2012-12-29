@@ -23,6 +23,10 @@ func NewTransform() Transform {
 	return Transform{tr, inv}
 }
 
+func TransformFrom(m Matrix4x4) Transform {
+	return Transform{m, m.Inverse()}
+}
+
 func (t Transform) Translate(dx, dy, dz float64) Transform {
 	tr := NewMatrix4x4(
 		1, 0, 0, dx,
