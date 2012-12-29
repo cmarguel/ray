@@ -75,7 +75,7 @@ func makeGrid(r, c int) []shape.Cube {
 			baseTransform := mmath.NewTransform().
 				Scale(0.25, height*0.25, 0.25).
 				RotateY(4*math.Pi/36).
-				Translate(x-1, height/2.-8, z+3)
+				Translate(x-1, height/2.-8.5, z+3)
 			cube := shape.NewCube()
 			cubes = append(cubes, cube.Transform(baseTransform))
 		}
@@ -112,11 +112,11 @@ func main() {
 		wor.AddShape(c)
 	}*/
 
-	cubes := makeGrid(numCubes, numCubes)
+	cubes := makeGrid(numCubes, numCubes*3)
 	shapeList := list.New()
 	for _, c := range cubes {
-		//_ = c
-		wor.AddShape(c)
+		_ = c
+		//wor.AddShape(c)
 		shapeList.PushBack(accel.NewGeometricPrimitive(c))
 	}
 
@@ -140,8 +140,8 @@ func main() {
 	//cube3 = cube3.Transform(tr)
 	//wor.AddShape(cube3)
 
-	wor.AddLight(light.NewPointLight(1., 3.5, 6., 10., 10., 10.))
-	//wor.AddLight(light.NewPointLight(278., 278, 279.5, 100., 100., 100.))
+	wor.AddLight(light.NewPointLight(1., 3.5, 9., 20., 20., 20.))
+	wor.AddLight(light.NewPointLight(278., 278, 279.5, 100., 100., 100.))
 
 	c.Render(wor)
 
