@@ -94,7 +94,7 @@ func (t Transform) RotateZ(angle float64) Transform {
 	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
-func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
+func LookAt(pos, look, up geom.Vector3) Transform {
 	dir := look.Minus(pos).Normalized()
 	left := up.Normalized().Cross(dir).Normalized()
 	newUp := dir.Cross(left)
@@ -105,8 +105,8 @@ func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
 		left.Z, newUp.Z, dir.Z, pos.Z,
 		0, 0, 0, 1,
 	)
-	m := tr.Times(t.m)
-	return Transform{m, m.Inverse()}
+	//m := tr.Times(t.m)
+	return Transform{tr.Inverse(), tr}
 }
 
 func dot(v1, v2 []float64) float64 {
@@ -134,7 +134,7 @@ func (t Transform) Times(t2 Transform) Transform {
 	return Transform{m, inv}
 }
 
-func (t Transform) Perspective(fov, n, f float64) Transform {
+func Perspective(fov, n, f float64) Transform {
 	persp := NewMatrix4x4(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -142,8 +142,9 @@ func (t Transform) Perspective(fov, n, f float64) Transform {
 		0, 0, 1, 0)
 
 	invTan := 1. / math.Tan(DegToRad*fov/2.)
-	m := t.Scale(invTan, invTan, 1).m.Times(persp)
-	return Transform{m, m.Inverse()}
+	pers := Transform{persp, persp.Inverse()}
+	scaled := pers.Scale(invTan, invTan, 1)
+	return scaled
 }
 
 func (t Transform) Inverse() Transform {

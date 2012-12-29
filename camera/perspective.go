@@ -13,7 +13,7 @@ type Perspective struct {
 }
 
 func NewPerspective(c2w mmath.Transform, window []float64, fov float64, film film.ImageFilm) Perspective {
-	persp := mmath.NewTransform().Perspective(fov, 1e-2, 1000.)
+	persp := mmath.Perspective(fov, 1e-2, 1000.)
 	proj := NewProjective(c2w, persp, window, film)
 	r2c := proj.RasterToCamera
 	dx := r2c.Apply(geom.NewVector3(1, 0, 0)).Minus(r2c.Apply(geom.NewVector3(0, 0, 0)))

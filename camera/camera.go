@@ -38,7 +38,7 @@ func NewPinholeCamera(film film.ImageFilm) PinholeCamera {
 	look := geom.NewVector3(0., 0., 1.)
 	up := geom.NewVector3(0, 1., 0)
 
-	tr := mmath.NewTransform().LookAt(pos, look, up)
+	tr := mmath.LookAt(pos, look, up)
 
 	return PinholeCamera{pos, look, up, film, tr}
 }

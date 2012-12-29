@@ -51,7 +51,7 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 		screen = []float64{-1., 1., -1. / frame, 1. / frame}
 	}
 
-	c2w := mmath.NewTransform().LookAt(
+	c2w := mmath.LookAt(
 		geom.NewVector3(0, 0, 0),
 		geom.NewVector3(0, 0, 1),
 		geom.NewVector3(0, 1, 0))
