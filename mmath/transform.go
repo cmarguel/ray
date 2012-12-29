@@ -36,7 +36,7 @@ func (t Transform) Translate(dx, dy, dz float64) Transform {
 		0, 0, 1, -dz,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m), t.m.Times(inv)}
+	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
 func (t Transform) Scale(x, y, z float64) Transform {
@@ -52,7 +52,7 @@ func (t Transform) Scale(x, y, z float64) Transform {
 		0, 0, 1./z, 0,
 		0, 0, 0, 1,
 	)
-	return Transform{tr.Times(t.m), t.m.Times(inv)}
+	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
 func (t Transform) RotateX(angle float64) Transform {
@@ -65,7 +65,7 @@ func (t Transform) RotateX(angle float64) Transform {
 		0, 0, 0, 1,
 	)
 	inv := tr.Transpose()
-	return Transform{tr.Times(t.m), t.m.Times(inv)}
+	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
 func (t Transform) RotateY(angle float64) Transform {
@@ -78,7 +78,7 @@ func (t Transform) RotateY(angle float64) Transform {
 		0, 0, 0, 1,
 	)
 	inv := tr.Transpose()
-	return Transform{tr.Times(t.m), t.m.Times(inv)}
+	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
 func (t Transform) RotateZ(angle float64) Transform {
@@ -91,7 +91,7 @@ func (t Transform) RotateZ(angle float64) Transform {
 		0, 0, 0, 1,
 	)
 	inv := tr.Transpose()
-	return Transform{tr.Times(t.m), t.m.Times(inv)}
+	return Transform{tr.Times(t.m), t.inv.Times(inv)}
 }
 
 func (t Transform) LookAt(pos, look, up geom.Vector3) Transform {
@@ -130,7 +130,7 @@ func (t Transform) ApplyToRay(r geom.Ray) geom.Ray {
 
 func (t Transform) Times(t2 Transform) Transform {
 	m := t.m.Times(t2.m)
-	inv := t2.m.Times(t.m)
+	inv := t2.inv.Times(t.inv)
 	return Transform{m, inv}
 }
 

@@ -46,12 +46,15 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 	frame := float64(film.ResolutionX) / float64(film.ResolutionY)
 	screen := []float64{0, 0, 0, 0}
 	if frame > 1. {
-		screen = []float64{-frame, frame, -1., -1.}
+		screen = []float64{-frame, frame, -1., 1.}
 	} else {
-		screen = []float64{-1., -1., -1. / frame, 1. / frame}
+		screen = []float64{-1., 1., -1. / frame, 1. / frame}
 	}
 
-	c2w := mmath.NewTransform().LookAt(geom.NewVector3(0, 0, -50), geom.NewVector3(0, 0, 1), geom.NewVector3(0, 1, 0))
+	c2w := mmath.NewTransform().LookAt(
+		geom.NewVector3(0, 0, 0),
+		geom.NewVector3(0, 0, 1),
+		geom.NewVector3(0, 1, 0))
 
 	cam := camera.NewPerspective(c2w, screen, 355., film)
 

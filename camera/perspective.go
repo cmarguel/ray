@@ -29,6 +29,7 @@ func (p Perspective) GenerateRay(sample sampler.Sample) geom.Ray {
 	ray := geom.NewRay(geom.NewVector3(0, 0, 0), pCamera)
 	// ray.Time = mmath.Lerp(sample.Time, v1, v2)
 	ray = p.CameraToWorld.ApplyToRay(ray)
+	//fmt.Printf("%s\n", p.RasterToCamera)
 
 	return ray
 }
