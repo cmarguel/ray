@@ -19,9 +19,9 @@ func NewProjective(c2w, proj mmath.Transform, window []float64, film film.ImageF
 	c2s := proj
 
 	s2r := mmath.NewTransform().
-		Scale(float64(film.ResolutionX), float64(film.ResolutionY), 1.).
+		Translate(-window[0], -window[3], 0.).
 		Scale(1./(window[1]-window[0]), 1./(window[2]-window[3]), 1.).
-		Translate(-window[0], -window[3], 0.)
+		Scale(float64(film.ResolutionX), float64(film.ResolutionY), 1.)
 
 	r2s := s2r.Inverse()
 

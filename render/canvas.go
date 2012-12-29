@@ -56,7 +56,10 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 		geom.NewVector3(0, 0, 1),
 		geom.NewVector3(0, 1, 0))
 
-	cam := camera.NewPerspective(c2w, screen, 355., film)
+	_ = c2w
+	_ = screen
+	cam := camera.NewPerspective(c2w, screen, 60., film)
+	//cam := camera.NewPinholeCamera(film)
 
 	return Canvas{w, h, m, out, cam, film}
 }
