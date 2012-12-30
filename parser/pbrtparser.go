@@ -1,13 +1,20 @@
 package parser
 
 import (
+	"bufio"
+	"fmt"
 	"strings"
 )
 
-/* line = comment | spec
+/* file = {directive} 
+ * directive = 
+ *     # ... nl 
+ *     | spec nl
  * spec = ident {arg}
- * arg = ident | "{ident}" [array]
- * array = [{ident}]
+ * arg = 
+ *     ident 
+ *     | quote {ident} quote [lbr array rbr]
+ * array = {[nl] ident [nl]}
  */
 
 type Directive struct {
@@ -16,36 +23,53 @@ type Directive struct {
 }
 
 type Parser struct {
-	str       string
-	sym       Symbol
-	lex       *Lexer
-	Directive Directive
+	sym        Symbol
+	lex        *Lexer
+	Directives []Directive
 }
 
-func NewParser(s string) *Parser {
-	l := NewLexer(s)
+func (p Parser) curr() *Directive {
+	return &p.Directives[len(p.Directives)-1]
+}
 
-	return &Parser{s, l.next(), l, Directive{}}
+func NewParser(reader *bufio.Reader) *Parser {
+	l := NewLexer(reader)
+
+	return &Parser{l.next(), l, make([]Directive, 0)}
 }
 
 func (p *Parser) Parse() bool {
-	if p.sym.str[0] == '#' {
-		return false
+	for !p.accept("eof") {
+		p.line()
 	}
-	p.spec()
 	return true
 }
 
+func (p *Parser) line() {
+	if p.accept("nl") || p.accept("eof") {
+
+	} else if p.accept("hash") {
+		for !p.accept("nl") && !p.accept("eof") {
+			p.next()
+		}
+	} else {
+		dir := *new(Directive)
+		fmt.Println("creating directive for ", p.sym)
+		p.Directives = append(p.Directives, dir)
+		p.spec()
+	}
+}
+
 func (p *Parser) spec() {
-	p.Directive.Name = p.sym.str
+	p.curr().Name = p.sym.str
 	p.accept("ident")
-	for p.lex.hasMore() && (p.sym.tok == "ident" || p.sym.tok == "quote") {
+	for p.sym.tok == "ident" || p.sym.tok == "quote" || p.sym.tok == "lbr" {
 		p.arg()
 	}
 }
 
 func (p *Parser) add(s string) {
-	p.Directive.Args = append(p.Directive.Args, s)
+	p.curr().Args = append(p.curr().Args, s)
 }
 
 func (p *Parser) arg() {
@@ -66,6 +90,8 @@ func (p *Parser) arg() {
 		if p.sym.tok == "lbr" {
 			p.array()
 		}
+	} else if p.sym.tok == "lbr" {
+		p.array()
 	} else {
 		panic("parse error")
 	}
@@ -86,9 +112,7 @@ func (p *Parser) array() {
 }
 
 func (p *Parser) next() {
-	if p.lex.hasMore() {
-		p.sym = p.lex.next()
-	}
+	p.sym = p.lex.next()
 }
 
 func (p *Parser) accept(s string) bool {

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
+	//"strings"
 )
 
 func GetDirectives(path string) []Directive {
@@ -16,8 +16,11 @@ func GetDirectives(path string) []Directive {
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
+	parser := NewParser(reader)
+	parser.Parse()
+	return parser.Directives
 
-	directives := make([]Directive, 0)
+	/*directives := make([]Directive, 0)
 	for {
 		part, prefix, err := reader.ReadLine()
 		if err != nil {
@@ -39,7 +42,7 @@ func GetDirectives(path string) []Directive {
 		}
 	}
 
-	return directives
+	return directives */
 }
 
 func concat(old1, old2 []byte) []byte {
