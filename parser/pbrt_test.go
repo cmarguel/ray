@@ -109,6 +109,22 @@ func Test_named_array(t *testing.T) {
 
 }
 
+func Test_named_array_with_newlines(t *testing.T) {
+	p := NewParser(newStringReader("foobar \"baz qux\" [1 2 \n3]"))
+	if !p.Parse() {
+		t.Fail()
+	}
+	if p.curr().Name != "foobar" || len(p.curr().Args) != 2 {
+		t.Fail()
+	}
+	if p.curr().Args[0] != "\"baz qux\"" || p.curr().Args[1] != "1 2 3" {
+		fmt.Printf("first arg was |%s| and second was |%s|\n", p.curr().Args[0], p.curr().Args[1])
+		t.Fail()
+	}
+	fmt.Println(p.curr().Args)
+
+}
+
 func Test_singleton_strings(t *testing.T) {
 	p := NewParser(newStringReader("foobar \"alpha\" \"beta\""))
 	if !p.Parse() {
