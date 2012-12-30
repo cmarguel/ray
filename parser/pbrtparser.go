@@ -2,7 +2,6 @@ package parser
 
 import (
 	"bufio"
-	"fmt"
 	"strings"
 )
 
@@ -54,7 +53,6 @@ func (p *Parser) line() {
 		}
 	} else {
 		dir := *new(Directive)
-		fmt.Println("creating directive for ", p.sym)
 		p.Directives = append(p.Directives, dir)
 		p.spec()
 	}
@@ -101,7 +99,7 @@ func (p *Parser) array() {
 	p.accept("lbr")
 	id := ""
 	id += p.sym.str + " "
-	for p.accept("ident") {
+	for p.accept("nl") || p.accept("ident") {
 		if p.sym.tok == "ident" {
 			id += p.sym.str + " "
 		}
