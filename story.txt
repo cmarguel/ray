@@ -136,3 +136,10 @@ and am more or less making it up as I go along.
 	2.	Something seems to be wrong when I try rendering triangle meshes. I've been looking at it 
 		for a while, so I decided it would be best to stop for now and work on a better camera, which
 		should help me figure out the mesh problem better once I get a sane perspective, so to speak.
+
+21 Dec 2012
+	1.	I've mostly been doing tweaks and trying to figure out why the files I load won't render. The meshes seem
+		to load correctly, but the camera isn't finding them properly. The lighting issue I had is much more 
+		pronounced now, which may be a good thing.
+	2.	Also made various fixes to the parser. Even now it doesn't handle all the possible cases but it's
+		good enough for the time being.

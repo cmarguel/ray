@@ -87,8 +87,10 @@ func main() {
 	fmt.Println("Making basic image")
 
 	conf := parser.LoadConfig("scenes/cornell-mlt.pbrt")
+	//conf := parser.LoadConfig("scenes/microcity.pbrt")
 
-	c := render.NewCanvasPNG(800, 600, "test.png")
+	cam := setupCamera(800, 600)
+	c := render.NewCanvasPNG(800, 600, cam, "test.png")
 	wor := world.NewWorld()
 
 	numTriangles := 10
@@ -117,13 +119,17 @@ func main() {
 	for _, c := range cubes {
 		_ = c
 		//wor.AddShape(c)
-		shapeList.PushBack(accel.NewGeometricPrimitive(c))
+		//shapeList.PushBack(accel.NewGeometricPrimitive(c))
 	}
 
 	for _, att := range conf.Attributes {
-		for _, shape := range att.Shapes {
-			_ = shape
-			//shapeList.PushBack(accel.NewGeometricPrimitive(shape))
+		for _, sh := range att.Shapes {
+			_ = sh
+			sh = sh.(shape.Mesh).Transform(mmath.NewTransform().
+				Scale(1./60., 1./60., 1./60.).
+				RotateY(-5*math.Pi/36.).
+				Translate(-6, -5.5, 12))
+			shapeList.PushBack(accel.NewGeometricPrimitive(sh))
 		}
 	}
 
@@ -131,6 +137,7 @@ func main() {
 	grid := accel.NewGrid(shapeList, false)
 	wor.SetPrimitive(grid)
 	fmt.Println("Done building grid!")
+	fmt.Println("Bounding box for grid: ", grid.WorldBound())
 
 	//cube3 := shape.NewCube()
 	//tr := mmath.NewTransform().
@@ -140,11 +147,40 @@ func main() {
 	//cube3 = cube3.Transform(tr)
 	//wor.AddShape(cube3)
 
-	wor.AddLight(light.NewPointLight(1., 3.5, 9., 20., 20., 20.))
-	wor.AddLight(light.NewPointLight(278., 278, 279.5, 100., 100., 100.))
+	//wor.AddLight(light.NewPointLight(1., 6, 13., 20., 20., 20.))
+	wor.AddLight(light.NewPointLight(2., 3, 7., 20., 20., 20.))
+	//wor.AddLight(light.NewPointLight(278., 335, 279.5, 100., 100., 100.))
 
 	c.Render(wor)
 
 	fmt.Println("Done")
 
+}
+
+func setupCamera(w, h int) Camera {
+	filter := sampler.NewGaussianFilter(0.5, 0.5, 0.75)
+	film := film.NewImageFilm(w, h, filter)
+
+	//camera := camera.NewPinholeCamera(film)
+	frame := float64(film.ResolutionX) / float64(film.ResolutionY)
+	screen := []float64{0, 0, 0, 0}
+	if frame > 1. {
+		screen = []float64{-frame, frame, -1., 1.}
+	} else {
+		screen = []float64{-1., 1., -1. / frame, 1. / frame}
+	}
+
+	c2w := mmath.LookAt(
+		geom.NewVector3(0, 0, 0),
+		geom.NewVector3(0.25, 0, 1),
+		geom.NewVector3(0, 1, 0))
+	//c2w = mmath.LookAt(
+	//	geom.NewVector3(-1.42702, -3.30238, 1.79759),
+	//	geom.NewVector3(0.023598, 9.69691, -4.68208),
+	//	geom.NewVector3(0.00016145, 0.388419, 0.921483))
+
+	_ = c2w
+	_ = screen
+	cam := camera.NewPerspective(c2w, screen, 55., film)
+	//cam := camera.NewPinholeCamera(film)
 }

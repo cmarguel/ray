@@ -2,11 +2,13 @@ package config
 
 import (
 	"ray/geom"
+	"ray/mmath"
 	"ray/shape"
 )
 
 type Attribute struct {
-	Shapes []shape.Shape
+	Shapes    []shape.Shape
+	Transform *mmath.Transform
 }
 
 type Config struct {

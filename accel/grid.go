@@ -123,7 +123,7 @@ func (g Grid) posToVoxel(p geom.Vector3, axis int) int {
 }
 
 func (g Grid) WorldBound() geom.BBox {
-	return *new(geom.BBox)
+	return g.bounds
 }
 
 func (g Grid) CanIntersect() bool {

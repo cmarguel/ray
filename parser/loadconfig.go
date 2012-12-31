@@ -3,6 +3,7 @@ package parser
 import (
 	"ray/config"
 	"ray/geom"
+	"ray/mmath"
 	"ray/shape"
 	"strconv"
 	"strings"
@@ -15,11 +16,12 @@ func LoadConfig(path string) config.Config {
 	inAttribute := false
 	var attribute *config.Attribute = nil
 	for _, dir := range directives {
-		if dir.Name == "AttributeBegin" {
+		if dir.Name == "AttributeBegin" || dir.Name == "TransformBegin" {
 			inAttribute = true
 			attribute = new(config.Attribute)
+			attribute.Transform = nil
 			continue
-		} else if dir.Name == "AttributeEnd" {
+		} else if dir.Name == "AttributeEnd" || dir.Name == "TransformEnd" {
 			inAttribute = false
 			conf.AddAttribute(*attribute)
 			continue
@@ -40,8 +42,21 @@ func handleAttribute(dir Directive, att *config.Attribute) {
 		if contains(dir.Args, "trianglemesh") {
 			inds := getIntSlice(dir.Args, "integer indices")
 			p := getFloatSlice(dir.Args, "point P")
-			att.Shapes = append(att.Shapes, shape.NewMesh(inds, makeVectors(p)))
+			mesh := shape.NewMesh(inds, makeVectors(p))
+			if att.Transform != nil {
+				mesh = mesh.Transform(*att.Transform)
+			}
+			att.Shapes = append(att.Shapes, mesh)
 		}
+	case "Transform":
+		t := floatSlice(dir.Args[0])
+		m := mmath.NewMatrix4x4(
+			t[0], t[1], t[2], t[3],
+			t[4], t[5], t[6], t[7],
+			t[8], t[9], t[10], t[11],
+			t[12], t[13], t[14], t[15])
+		tr := mmath.TransformFrom(m)
+		att.Transform = &tr
 	}
 }
 

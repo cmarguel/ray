@@ -9,7 +9,6 @@ import (
 
 	"ray/camera"
 	"ray/camera/film"
-	"ray/geom"
 	"ray/integrator"
 	"ray/mmath"
 	"ray/output"
@@ -31,7 +30,7 @@ type Canvas struct {
 	film   film.ImageFilm
 }
 
-func NewCanvasPNG(w, h int, filename string) Canvas {
+func NewCanvasPNG(w, h int, cam camera.Camera, filename string) Canvas {
 	m := image.NewRGBA(image.Rect(0, 0, w, h))
 	white := color.RGBA{255, 255, 255, 255}
 
@@ -39,29 +38,7 @@ func NewCanvasPNG(w, h int, filename string) Canvas {
 
 	out := output.NewPNGOutput(filename)
 
-	filter := sampler.NewGaussianFilter(0.5, 0.5, 0.75)
-	film := film.NewImageFilm(w, h, filter)
-
-	//camera := camera.NewPinholeCamera(film)
-	frame := float64(film.ResolutionX) / float64(film.ResolutionY)
-	screen := []float64{0, 0, 0, 0}
-	if frame > 1. {
-		screen = []float64{-frame, frame, -1., 1.}
-	} else {
-		screen = []float64{-1., 1., -1. / frame, 1. / frame}
-	}
-
-	c2w := mmath.LookAt(
-		geom.NewVector3(0, 0, 0),
-		geom.NewVector3(0.25, 0, 1),
-		geom.NewVector3(0, 1, 0))
-
-	_ = c2w
-	_ = screen
-	cam := camera.NewPerspective(c2w, screen, 55., film)
-	//cam := camera.NewPinholeCamera(film)
-
-	return Canvas{w, h, m, out, cam, film}
+	return Canvas{w, h, m, out, cam, cam.Film().(film.ImageFilm)}
 }
 
 func (c Canvas) Set(x, y int, color color.Color) {
