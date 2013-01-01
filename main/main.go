@@ -9,11 +9,14 @@ import (
 	"strconv"
 
 	"ray/accel"
+	"ray/camera"
+	"ray/camera/film"
 	"ray/geom"
 	"ray/light"
 	"ray/mmath"
 	"ray/parser"
 	"ray/render"
+	"ray/render/sampler"
 	"ray/shape"
 	"ray/world"
 )
@@ -148,7 +151,8 @@ func main() {
 	//wor.AddShape(cube3)
 
 	//wor.AddLight(light.NewPointLight(1., 6, 13., 20., 20., 20.))
-	wor.AddLight(light.NewPointLight(2., 3, 7., 20., 20., 20.))
+	wor.AddLight(light.NewPointLight(5., 0, 2., 120., 120., 120.))
+	//wor.AddLight(light.NewPointLight(0., 0, 0., 120., 120., 120.))
 	//wor.AddLight(light.NewPointLight(278., 335, 279.5, 100., 100., 100.))
 
 	c.Render(wor)
@@ -157,7 +161,7 @@ func main() {
 
 }
 
-func setupCamera(w, h int) Camera {
+func setupCamera(w, h int) camera.Camera {
 	filter := sampler.NewGaussianFilter(0.5, 0.5, 0.75)
 	film := film.NewImageFilm(w, h, filter)
 
@@ -183,4 +187,5 @@ func setupCamera(w, h int) Camera {
 	_ = screen
 	cam := camera.NewPerspective(c2w, screen, 55., film)
 	//cam := camera.NewPinholeCamera(film)
+	return cam
 }
