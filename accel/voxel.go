@@ -3,17 +3,19 @@ package accel
 import (
 	"container/list"
 	"ray/geom"
+	"sync"
 )
 
 type Voxel struct {
 	Primitives      *list.List
 	AllCanIntersect bool
+	mutex           *sync.Mutex
 }
 
 func NewVoxel(p Primitive) Voxel {
 	primitives := list.New()
 	primitives.PushBack(p)
-	return Voxel{primitives, false}
+	return Voxel{primitives, false, new(sync.Mutex)}
 }
 
 func (v Voxel) AddPrimitive(p Primitive) {
@@ -22,14 +24,14 @@ func (v Voxel) AddPrimitive(p Primitive) {
 
 func (v Voxel) Intersect(ray *geom.Ray) (Intersection, bool) {
 	if !v.AllCanIntersect {
-		// TODO write lock here 
+		v.mutex.Lock()
 		for e := v.Primitives.Front(); e != nil; e = e.Next() {
 			prim := e.Value.(Primitive)
 			refined := v.refine(prim)
 			e.Value = refined
 		}
 		v.AllCanIntersect = true
-		// TODO remove write lock
+		v.mutex.Unlock()
 	}
 
 	return v.findIntersections(ray)
@@ -37,14 +39,14 @@ func (v Voxel) Intersect(ray *geom.Ray) (Intersection, bool) {
 
 func (v Voxel) IntersectP(ray geom.Ray) bool {
 	if !v.AllCanIntersect {
-		// TODO write lock here 
+		v.mutex.Lock()
 		for e := v.Primitives.Front(); e != nil; e = e.Next() {
 			prim := e.Value.(Primitive)
 			refined := v.refine(prim)
 			e.Value = refined
 		}
+		v.mutex.Unlock()
 		v.AllCanIntersect = true
-		// TODO remove write lock
 	}
 
 	return v.findIntersectionsP(ray)

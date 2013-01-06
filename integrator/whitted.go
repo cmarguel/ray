@@ -20,7 +20,8 @@ func (w WhittedIntegrator) Li(wor world.World, isect accel.Intersection) spectru
 
 	for _, light := range wor.Lights {
 		spectrum, _, tester := light.SampleL(isect.DiffGeom.P, isect.RayEpsilon, 0)
-		if (!spectrum.IsBlack()) && wor.Unoccluded(*tester) {
+
+		if !spectrum.IsBlack() && wor.Unoccluded(*tester) {
 			spec = spec.Plus(spectrum)
 		}
 	}

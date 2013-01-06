@@ -148,7 +148,10 @@ func (g Grid) Intersect(ray *geom.Ray) (Intersection, bool) {
 		voxel := g.voxels[g.offset(pos[0], pos[1], pos[2])]
 		if voxel != nil {
 			hit := false
-			intersect, hit = voxel.Intersect(ray)
+			isect, hit := voxel.Intersect(ray)
+			if hit {
+				intersect = isect
+			}
 			hitSomething = hitSomething || hit
 		}
 

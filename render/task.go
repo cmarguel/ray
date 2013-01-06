@@ -32,7 +32,7 @@ func (t Task) Run() {
 func (t Task) raytraceSample(sample sampler.Sample) {
 	ray := t.Camera.GenerateRay(sample)
 
-	radiance := t.Renderer.Li(ray, t.World)
+	radiance := t.Renderer.Li(ray, t.World).Clamp(0, 1)
 
 	t.Camera.Film().AddSample(sample, radiance)
 }

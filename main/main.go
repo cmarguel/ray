@@ -131,13 +131,14 @@ func main() {
 			sh = sh.(shape.Mesh).Transform(mmath.NewTransform().
 				Scale(1./60., 1./60., 1./60.).
 				RotateY(-5*math.Pi/36.).
+				//RotateX(math.Pi/36).
 				Translate(-6, -5.5, 12))
 			shapeList.PushBack(accel.NewGeometricPrimitive(sh))
 		}
 	}
 
 	fmt.Println("Building grid...")
-	grid := accel.NewGrid(shapeList, false)
+	grid := accel.NewGrid(shapeList, true)
 	wor.SetPrimitive(grid)
 	fmt.Println("Done building grid!")
 	fmt.Println("Bounding box for grid: ", grid.WorldBound())
@@ -151,7 +152,7 @@ func main() {
 	//wor.AddShape(cube3)
 
 	//wor.AddLight(light.NewPointLight(1., 6, 13., 20., 20., 20.))
-	wor.AddLight(light.NewPointLight(5., 0, 2., 120., 120., 120.))
+	wor.AddLight(light.NewPointLight(5., 0, 2., 60., 60., 60.))
 	//wor.AddLight(light.NewPointLight(0., 0, 0., 120., 120., 120.))
 	//wor.AddLight(light.NewPointLight(278., 335, 279.5, 100., 100., 100.))
 
@@ -177,7 +178,7 @@ func setupCamera(w, h int) camera.Camera {
 	c2w := mmath.LookAt(
 		geom.NewVector3(0, 0, 0),
 		geom.NewVector3(0.25, 0, 1),
-		geom.NewVector3(0, 1, 0))
+		geom.NewVector3(0, 1, 0).Normalized())
 	//c2w = mmath.LookAt(
 	//	geom.NewVector3(-1.42702, -3.30238, 1.79759),
 	//	geom.NewVector3(0.023598, 9.69691, -4.68208),

@@ -73,7 +73,7 @@ func taskLogger(numTasks int, done <-chan int) {
 }
 
 func (c Canvas) render(wor world.World) {
-	const numRoutines = 8
+	const numRoutines = 4
 	runner := NewTaskRunner(numRoutines)
 	runner.Start()
 
