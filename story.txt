@@ -166,4 +166,6 @@ and am more or less making it up as I go along.
 12 Jan 2012
 	1.	The bug turned out to be ridiculously simple--I had forgotten to normalize the ray in the visibility
 		tester.
-		
+	2.	I added a method that runs tasks in their own goroutines. It seems to give a decent speedup--3 seconds
+		faster than using the taskrunner. On the other hand, I'm having trouble figuring out how to print
+		a progress report properly with it.

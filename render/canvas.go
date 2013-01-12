@@ -82,6 +82,7 @@ func (c Canvas) render(wor world.World) {
 
 	numPixels := c.Width * c.Height
 	numTasks := mmath.RoundUpPow2(numPixels / (16 * 16))
+
 	go taskLogger(numTasks, runner.TasksDone)
 	fmt.Printf("%d tasks to do with %d goroutines\n", numTasks, numRoutines)
 
@@ -95,4 +96,35 @@ func (c Canvas) render(wor world.World) {
 	}
 	runner.Stop()
 	runner.Wait()
+}
+
+func (c Canvas) renderNoRunner(wor world.World) {
+	const numRoutines = 4
+	//runner := NewTaskRunner(numRoutines)
+	//runner.Start()
+
+	whitted := integrator.NewWhitted()
+	renderer := sampler.NewRenderer(whitted)
+
+	numPixels := c.Width * c.Height
+	numTasks := mmath.RoundUpPow2(numPixels / (16 * 16))
+
+	done := make(chan int)
+	go taskLogger(numTasks, done)
+	fmt.Printf("%d tasks to do with %d goroutines\n", numTasks, numRoutines)
+
+	//mainSampler := sampler.NewStratified(0, c.Width, 0, c.Height, 4, 4, true, 0, 0)
+	mainSampler := sampler.NewUniformSampler(0, c.Width, 0, c.Height, 1, 0, 0)
+
+	for i := 0; i < numTasks; i++ {
+		subsampler := mainSampler.GetSubSampler(numTasks-1-i, numTasks)
+		task := NewTask(renderer, c, c.camera, wor, subsampler)
+		go func() {
+			task.Run()
+			done <- 1
+		}()
+		//runner.AddTask(task)
+	}
+	//runner.Stop()
+	//runner.Wait()
 }
