@@ -129,10 +129,11 @@ func main() {
 		for _, sh := range att.Shapes {
 			_ = sh
 			sh = sh.(shape.Mesh).Transform(mmath.NewTransform().
-				Scale(1./60., 1./60., 1./60.).
-				RotateY(-5*math.Pi/36.).
+				Scale(1., 1., 1.).
+				//RotateY(-5*math.Pi/36.).
 				//RotateX(math.Pi/36).
-				Translate(-6, -5.5, 12))
+				//Translate(-6, -5.5, 12)) 
+				Translate(-278, -273, 500))
 			shapeList.PushBack(accel.NewGeometricPrimitive(sh))
 		}
 	}
@@ -151,10 +152,13 @@ func main() {
 	//cube3 = cube3.Transform(tr)
 	//wor.AddShape(cube3)
 
-	//wor.AddLight(light.NewPointLight(1., 6, 13., 20., 20., 20.))
-	wor.AddLight(light.NewPointLight(5., 0, 2., 60., 60., 60.))
+	//wor.AddLight(light.NewPointLight(1., 10, 13., 50., 50., 50.))
+	//wor.AddLight(light.NewPointLight(8., 0, 2., 60., 0., 0.))
 	//wor.AddLight(light.NewPointLight(0., 0, 0., 120., 120., 120.))
-	//wor.AddLight(light.NewPointLight(278., 335, 279.5, 100., 100., 100.))
+	//wor.AddLight(light.NewPointLight(278., 478, 279.5, 1000., 1000., 1000.))
+	//wor.AddLight(light.NewPointLight(0., 200, 630, 50000, 50000, 50000))
+	wor.AddLight(light.NewPointLight(0., 205, 779.5, 10000, 10000, 10000))
+	wor.AddLight(light.NewPointLight(0., 0, 0, 250000, 0, 0))
 
 	c.Render(wor)
 
@@ -176,9 +180,9 @@ func setupCamera(w, h int) camera.Camera {
 	}
 
 	c2w := mmath.LookAt(
-		geom.NewVector3(0, 0, 0),
-		geom.NewVector3(0.25, 0, 1),
-		geom.NewVector3(0, 1, 0).Normalized())
+		geom.NewVector3(0, 0, 0.),
+		geom.NewVector3(0, 0, 1),
+		geom.NewVector3(0, 1, 0))
 	//c2w = mmath.LookAt(
 	//	geom.NewVector3(-1.42702, -3.30238, 1.79759),
 	//	geom.NewVector3(0.023598, 9.69691, -4.68208),
