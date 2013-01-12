@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	//"strings"
 )
 
 func GetDirectives(path string) []Directive {
@@ -19,30 +18,6 @@ func GetDirectives(path string) []Directive {
 	parser := NewParser(reader)
 	parser.Parse()
 	return parser.Directives
-
-	/*directives := make([]Directive, 0)
-	for {
-		part, prefix, err := reader.ReadLine()
-		if err != nil {
-			break
-		}
-		for prefix {
-			var p []byte
-			p, prefix, _ = reader.ReadLine()
-			part = concat(part, p)
-		}
-		// fmt.Println("|", string(part), "|")
-		line := strings.TrimSpace(string(part))
-		if len(line) > 0 {
-			parser := NewParser(line)
-
-			if parser.Parse() {
-				directives = append(directives, parser.Directive)
-			}
-		}
-	}
-
-	return directives */
 }
 
 func concat(old1, old2 []byte) []byte {

@@ -2,6 +2,7 @@ package config
 
 import (
 	"ray/geom"
+	"ray/light"
 	"ray/mmath"
 	"ray/shape"
 )
@@ -9,6 +10,7 @@ import (
 type Attribute struct {
 	Shapes    []shape.Shape
 	Transform *mmath.Transform
+	Lights    []light.PointLight
 }
 
 type Config struct {

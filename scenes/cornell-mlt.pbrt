@@ -29,7 +29,8 @@ WorldBegin
 AttributeBegin
     #Rotate 10 1 0 0 
     Translate 278.000000 278.000000 279.500000
-    LightSource "point" "point from" [0.000000 200.000000 0.000000 ] "color I" [412300 341100 298600 ] 
+    # TODO - multiply color by 10. Temporarily reduced values while lighting is still funny.
+    LightSource "point" "point from" [0.000000 200.000000 0.000000 ] "color I" [41230 34110 29860 ] 
 AttributeEnd
 # ignored Illuminate 1.000000 1.000000
 ############################################################################

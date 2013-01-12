@@ -128,14 +128,13 @@ func main() {
 	for _, att := range conf.Attributes {
 		for _, sh := range att.Shapes {
 			_ = sh
-			sh = sh.(shape.Mesh).Transform(mmath.NewTransform().
-				Scale(1., 1., 1.).
-				//RotateY(-5*math.Pi/36.).
-				//RotateX(math.Pi/36).
-				//Translate(-6, -5.5, 12)) 
-				Translate(-278, -273, 500))
+			sh = sh.(shape.Mesh)
 			shapeList.PushBack(accel.NewGeometricPrimitive(sh))
 		}
+		for _, l := range att.Lights {
+			wor.AddLight(l)
+		}
+
 	}
 
 	fmt.Println("Building grid...")
@@ -144,20 +143,9 @@ func main() {
 	fmt.Println("Done building grid!")
 	fmt.Println("Bounding box for grid: ", grid.WorldBound())
 
-	//cube3 := shape.NewCube()
-	//tr := mmath.NewTransform().
-	//	Scale(0.15, 0.15, 0.15).
-	//	Translate(0, 0.5, 7.)
-
-	//cube3 = cube3.Transform(tr)
-	//wor.AddShape(cube3)
-
 	//wor.AddLight(light.NewPointLight(1., 10, 13., 50., 50., 50.))
 	//wor.AddLight(light.NewPointLight(8., 0, 2., 60., 0., 0.))
 	//wor.AddLight(light.NewPointLight(0., 0, 0., 120., 120., 120.))
-	//wor.AddLight(light.NewPointLight(278., 478, 279.5, 1000., 1000., 1000.))
-	//wor.AddLight(light.NewPointLight(0., 200, 630, 50000, 50000, 50000))
-	wor.AddLight(light.NewPointLight(0., 205, 779.5, 10000, 10000, 10000))
 	wor.AddLight(light.NewPointLight(0., 0, 0, 250000, 0, 0))
 
 	c.Render(wor)

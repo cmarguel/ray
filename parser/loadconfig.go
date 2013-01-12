@@ -1,16 +1,49 @@
 package parser
 
 import (
+	"container/list"
 	"ray/config"
 	"ray/geom"
+	"ray/light"
 	"ray/mmath"
 	"ray/shape"
 	"strconv"
 	"strings"
 )
 
+type stack struct {
+	transforms *list.List
+}
+
+func (s stack) top() mmath.Transform {
+	return s.transforms.Front().Value.(mmath.Transform)
+}
+
+func (s stack) push(tr mmath.Transform) {
+	s.transforms.PushFront(tr)
+}
+
+func (s stack) pop() mmath.Transform {
+	return s.transforms.Remove(s.transforms.Front()).(mmath.Transform)
+}
+
+func (s stack) mod(tr mmath.Transform) {
+	s.pop()
+	s.push(tr)
+}
+
+func (s stack) repl() {
+	s.push(s.top())
+}
+
+func NewStack() stack {
+	return stack{list.New()}
+}
+
 func LoadConfig(path string) config.Config {
 	directives := GetDirectives(path)
+	transforms := NewStack()
+	transforms.push(mmath.NewTransform())
 
 	conf := config.NewConfig()
 	inAttribute := false
@@ -20,23 +53,25 @@ func LoadConfig(path string) config.Config {
 			inAttribute = true
 			attribute = new(config.Attribute)
 			attribute.Transform = nil
+			transforms.repl()
 			continue
 		} else if dir.Name == "AttributeEnd" || dir.Name == "TransformEnd" {
 			inAttribute = false
 			conf.AddAttribute(*attribute)
+			transforms.pop()
 			continue
 		}
 		if inAttribute {
-			handleAttribute(dir, attribute)
+			handleAttribute(dir, attribute, transforms)
 		} else {
-			handleGlobal(dir, &conf)
+			handleGlobal(dir, &conf, transforms)
 		}
 	}
 
 	return conf
 }
 
-func handleAttribute(dir Directive, att *config.Attribute) {
+func handleAttribute(dir Directive, att *config.Attribute, transforms stack) {
 	switch dir.Name {
 	case "Shape":
 		if contains(dir.Args, "trianglemesh") {
@@ -46,7 +81,7 @@ func handleAttribute(dir Directive, att *config.Attribute) {
 			if att.Transform != nil {
 				mesh = mesh.Transform(*att.Transform)
 			}
-			att.Shapes = append(att.Shapes, mesh)
+			att.Shapes = append(att.Shapes, mesh.Transform(transforms.top()))
 		}
 	case "Transform":
 		t := floatSlice(dir.Args[0])
@@ -57,6 +92,19 @@ func handleAttribute(dir Directive, att *config.Attribute) {
 			t[12], t[13], t[14], t[15])
 		tr := mmath.TransformFrom(m)
 		att.Transform = &tr
+		transforms.mod(tr)
+	case "Translate":
+		dx, _ := strconv.ParseFloat(dir.Args[0], 64)
+		dy, _ := strconv.ParseFloat(dir.Args[1], 64)
+		dz, _ := strconv.ParseFloat(dir.Args[2], 64)
+		tr := transforms.top().Translate(dx, dy, dz)
+		transforms.mod(tr)
+	case "LightSource":
+		p := getFloatSlice(dir.Args, "point from")
+		v := transforms.top().Apply(geom.NewVector3(p[0], p[1], p[2]))
+		c := getFloatSlice(dir.Args, "color I")
+		l := light.NewPointLight(v.Vals()[0], v.Vals()[1], v.Vals()[2], c[0], c[1], c[2])
+		att.Lights = append(att.Lights, l)
 	}
 }
 
@@ -70,12 +118,14 @@ func makeVectors(f []float64) []geom.Vector3 {
 	return v
 }
 
-func handleGlobal(dir Directive, conf *config.Config) {
+func handleGlobal(dir Directive, conf *config.Config, transforms stack) {
 	switch dir.Name {
 	case "Translate":
 		conf.Translate.X, _ = strconv.ParseFloat(dir.Args[0], 64)
 		conf.Translate.Y, _ = strconv.ParseFloat(dir.Args[1], 64)
 		conf.Translate.Z, _ = strconv.ParseFloat(dir.Args[2], 64)
+		tr := transforms.top().Translate(conf.Translate.X, conf.Translate.Y, conf.Translate.Z)
+		transforms.mod(tr)
 	case "Camera":
 		conf.Fov = getFloat(dir.Args, "float fov")
 	}
