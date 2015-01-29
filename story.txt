@@ -144,7 +144,7 @@ and am more or less making it up as I go along.
 	2.	Also made various fixes to the parser. Even now it doesn't handle all the possible cases but it's
 		good enough for the time being.
 
-6 Jan 2012
+6 Jan 2013
 	1.	After a long period of puzzling it out, I finally found the bug that's been causing the lighting 
 		errors--as I long suspected, the code in the grid accelerator was overwriting valid intersections 
 		with invalid values. (the fact that the noise was aligned perfectly with the voxel grid was the 
@@ -159,11 +159,11 @@ and am more or less making it up as I go along.
 		I had been putting this off, but decided to finally put it in, as I felt, incorrectly, that synchronization bugs might be causing the problem.
 		The approach to concurrency in Go is to use channels, but I felt mutexes made more sense because each voxel, I think, would have ended up with its own goroutine had I gone the channels route.  
 
-9 Jan 2012
+9 Jan 2013
 	1.	A new bug's shown up now that I've gotten the box to render from the perspective it was meant to be 	rendered. For some reason, each side of a box is casting shadows on another side of it, even when the
 		light is smack dab in the middle.
 
-12 Jan 2012
+12 Jan 2013
 	1.	The bug turned out to be ridiculously simple--I had forgotten to normalize the ray in the visibility
 		tester.
 	2.	I added a method that runs tasks in their own goroutines. It seems to give a decent speedup--3 seconds
